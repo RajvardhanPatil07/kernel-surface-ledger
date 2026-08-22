@@ -84,7 +84,7 @@ def render(action: str, targets: list[str]) -> str:
             merged.update(SYSCTL_TARGET_VALUES.get(target, {}))
         return sysctl_fragment(merged)
     if action == "systemd_confine":
-        unit = targets[0].replace(".service", ".service") if targets else "unknown.service"
+        unit = targets[0] if targets else "unknown.service"
         return systemd_confine(unit)
     if action == "remove_devnode_access":
         return udev_rule(targets[0] if targets else "/dev/kvm")

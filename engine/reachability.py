@@ -28,6 +28,13 @@ KCONFIG_PRESENCE: dict[str, tuple[str, ...]] = {
     "cfg.kconfig_compat": ("CONFIG_COMPAT",),
 }
 
+KCONFIG_MODULE_FALLBACK: dict[str, tuple[str, ...]] = {
+    "sc.io_uring_setup": ("io_uring",),
+    "sc.bpf_unpriv": ("bpf_syscall", "bpf"),
+    "sc.userfaultfd": ("userfaultfd",),
+    "sc.perf_event_open": ("perf_events", "perf"),
+}
+
 MODULE_MEMBERS: dict[str, tuple[str, ...]] = {
     "mod.legacy_fs": ("cramfs", "freevxfs", "jffs2", "hfsplus", "udf"),
 }
@@ -105,10 +112,19 @@ def _kconfig_present(kconfig: dict[str, str], symbols: tuple[str, ...]) -> bool:
     return any(kconfig.get(symbol) == "y" for symbol in symbols)
 
 
+def _syscall_present(entry: dict, raw: dict) -> bool:
+    """Built in (=y), or shipped as a loadable module for this element."""
+    if _kconfig_present(raw["kconfig"], KCONFIG_PRESENCE.get(entry["id"], ())):
+        return True
+    fallback = KCONFIG_MODULE_FALLBACK.get(entry["id"], ())
+    loaded_names = {m["name"] for m in raw["modules_loaded"]}
+    return any(name in raw["modules_available"] or name in loaded_names for name in fallback)
+
+
 def _module_state(entry: dict, raw: dict) -> tuple[bool, bool, str]:
     """Return (present, reachable, reason) for a module-kind element."""
     members = MODULE_MEMBERS.get(entry["id"], (entry["name"],))
-    loaded_names = {m["name"] for m in raw["modules_loaded"] if m["instances"] >= 0}
+    loaded_names = {m["name"] for m in raw["modules_loaded"]}
     available = set(raw["modules_available"])
     loaded_here = [m for m in members if m in loaded_names]
     loadable_here = [m for m in members if m in available]
@@ -157,9 +173,8 @@ def _lockdown_level(raw: dict) -> str | None:
 
 
 def _syscall_state(entry: dict, raw: dict) -> tuple[bool, bool, str]:
-    """Return (present, reachable_reason_pair) pieces for syscall elements."""
-    symbols = KCONFIG_PRESENCE.get(entry["id"], ())
-    present = _kconfig_present(raw["kconfig"], symbols)
+    """Return (present, reachable, reason) for syscall/namespace elements."""
+    present = _syscall_present(entry, raw)
     if entry["id"] == "sc.io_uring_setup":
         blocked, reason = _io_uring_gate(raw["sysctls"])
     else:

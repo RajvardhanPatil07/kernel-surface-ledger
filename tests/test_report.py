@@ -30,7 +30,8 @@ class ReportTest(unittest.TestCase):
     def test_byte_identical_across_runs(self) -> None:
         again = report.build_report(RAW_MINIMAL, load_weights(), load_cve_map())
         self.assertEqual(
-            json.dumps(self.report, sort_keys=True), json.dumps(again, sort_keys=True)
+            json.dumps(self.report), json.dumps(again),
+            "insertion order must also be deterministic, not just key order",
         )
 
     def test_no_trace_snapshot_still_produces_valid_report(self) -> None:

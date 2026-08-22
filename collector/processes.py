@@ -66,6 +66,11 @@ def read_process(pid_dir: Path, skips: list[dict[str, str]]) -> dict[str, object
     try:
         try:
             exe = os.readlink(exe_path)
+        except PermissionError as exc:
+            skipped.append(
+                {"source": f"process:{pid_dir.name}", "reason": f"exe unreadable: {exc}"}
+            )
+            return None
         except OSError:
             return None
         comm = comm_path.read_text(encoding="utf-8", errors="replace").strip()
@@ -86,8 +91,12 @@ def read_process(pid_dir: Path, skips: list[dict[str, str]]) -> dict[str, object
                     continue
                 if target.startswith("/dev/") or target.startswith("/proc/"):
                     open_paths.add(target)
-        except OSError:
-            pass
+        except PermissionError as exc:
+            skipped.append(
+                {"source": f"process:{pid_dir.name}/fd", "reason": f"permission denied: {exc}"}
+            )
+        except OSError as exc:
+            skipped.append({"source": f"process:{pid_dir.name}/fd", "reason": str(exc)})
         try:
             open_paths.update(parse_map_paths((pid_dir / "maps").read_text(encoding="utf-8", errors="replace")))
         except (OSError, PermissionError):
