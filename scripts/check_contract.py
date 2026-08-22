@@ -27,6 +27,7 @@ from jsonschema import Draft7Validator
 ROOT = Path(__file__).resolve().parent.parent
 
 REMOVABLE_KINDS = {"syscall", "module", "devnode", "namespace", "capability"}
+PER_SERVICE_ACTIONS = {"seccomp_filter", "systemd_confine"}
 
 
 def fail(message: str) -> None:
@@ -69,6 +70,30 @@ def check_weights() -> set[str]:
             known.add(entry["id"])
 
     print(f"ok: data/weights.yaml defines {len(known)} surface elements")
+
+    cve_map = json.loads((ROOT / "data" / "cve-map.json").read_text())
+    referenced = {
+        cluster
+        for entries in weights.values()
+        for entry in entries
+        for cluster in entry.get("cve_clusters", [])
+    }
+    unknown = referenced - set(cve_map)
+    if unknown:
+        fail(f"weights.yaml references clusters absent from cve-map.json: {sorted(unknown)}")
+
+    for cluster, mapping in cve_map.items():
+        if cluster.startswith("_"):
+            continue
+        if "cves" not in mapping:
+            fail(f"cve-map.json: cluster '{cluster}' missing 'cves' list")
+        if not isinstance(mapping["cves"], list):
+            fail(f"cve-map.json: cluster '{cluster}' has non-list 'cves'")
+        for cve in mapping["cves"]:
+            if not str(cve).startswith("CVE-"):
+                fail(f"cve-map.json: {cluster} carries malformed id '{cve}'")
+
+    print(f"ok: data/cve-map.json covers {len(referenced)} referenced clusters")
     return known
 
 
@@ -106,6 +131,69 @@ def check_references(report: dict, known: set[str]) -> None:
         f"ok: {len(element_ids)} elements and {len(report['workloads'])} workloads "
         "cross-reference cleanly"
     )
+
+
+def cve_ids_for(clusters: set[str], cve_map: dict) -> set[str]:
+    """Expand cluster ids into the concrete CVE ids they carry."""
+    ids: set[str] = set()
+    for cluster in clusters:
+        mapping = cve_map.get(cluster, {})
+        ids.update(mapping.get("cves", []))
+    return ids
+
+
+def check_cve_counts(report: dict, cve_map: dict) -> None:
+    """Every CVE count in the fixture must recompute from the curated map."""
+    clusters_of = {
+        element["id"]: set(element["cve_clusters"]) for element in report["surface_elements"]
+    }
+    reachable_ids = cve_ids_for(
+        {c for e in report["surface_elements"] if e["reachable_unpriv"] for c in e["cve_clusters"]},
+        cve_map,
+    )
+    declared = report["score"]["reachable_cve_count"]
+    if declared != len(reachable_ids):
+        fail(f"score.reachable_cve_count {declared} != recomputed {len(reachable_ids)}")
+
+    for row in report["ledger"]:
+        held: set[str] = set()
+        for eid in row["sole_owner_elements"] + row["shared_elements"]:
+            held |= clusters_of.get(eid, set())
+        expected = len(cve_ids_for(held, cve_map))
+        if row["reachable_cves"] != expected:
+            fail(f"{row['workload_id']}.reachable_cves {row['reachable_cves']} != {expected}")
+
+    orphaned_clusters: set[str] = set()
+    for eid in report["orphaned"]["elements"]:
+        orphaned_clusters |= clusters_of.get(eid, set())
+    kept_clusters: set[str] = set()
+    for element in report["surface_elements"]:
+        if element["reachable_unpriv"] and element["id"] not in report["orphaned"]["elements"]:
+            kept_clusters |= set(element["cve_clusters"])
+    neutralizable = cve_ids_for(orphaned_clusters - kept_clusters, cve_map)
+    declared_n = report["orphaned"]["cves_neutralizable"]
+    if declared_n != len(neutralizable):
+        fail(f"orphaned.cves_neutralizable {declared_n} != recomputed {len(neutralizable)}")
+
+    projected = report["score"].get("projected_after_plan")
+    if projected is not None:
+        killed_hostwide = sum(
+            step["cves_killed"]
+            for step in report["plan"]
+            if step["action"] not in PER_SERVICE_ACTIONS
+        )
+        expected_count = max(declared - killed_hostwide, 0)
+        if projected["reachable_cve_count"] != expected_count:
+            fail(f"projected.reachable_cve_count {projected['reachable_cve_count']} != {expected_count}")
+        removed_weight = sum(step["weight_removed"] for step in report["plan"])
+        expected_weight = round(max(report["score"]["reachable_surface_weight"] - removed_weight, 0.0), 2)
+        if abs(projected["reachable_surface_weight"] - expected_weight) >= 0.01:
+            fail(
+                f"projected.reachable_surface_weight {projected['reachable_surface_weight']} "
+                f"!= {expected_weight}"
+            )
+
+    print("ok: every CVE count recomputes from data/cve-map.json")
 
 
 def check_arithmetic(report: dict) -> None:
@@ -212,6 +300,8 @@ def main() -> None:
     report = check_schema_and_fixture()
     known = check_weights()
     check_references(report, known)
+    cve_map = json.loads((ROOT / "data" / "cve-map.json").read_text())
+    check_cve_counts(report, cve_map)
     check_arithmetic(report)
     check_orphan_definition(report)
     check_plan(report)

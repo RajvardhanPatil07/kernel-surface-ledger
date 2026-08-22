@@ -1,0 +1,184 @@
+{
+  "cmdline": "BOOT_IMAGE=/vmlinuz root=/dev/sda1 quiet splash",
+  "cpu_vulnerabilities": {},
+  "devnodes": {
+    "/dev/kvm": {
+      "gid": 108,
+      "mode_octal": "0666",
+      "nonroot_read": true,
+      "nonroot_write": true,
+      "path": "/dev/kvm",
+      "uid": 0
+    },
+    "/dev/mem": {
+      "gid": 15,
+      "mode_octal": "0640",
+      "nonroot_read": false,
+      "nonroot_write": false,
+      "path": "/dev/mem",
+      "uid": 0
+    }
+  },
+  "kconfig": {
+    "CONFIG_BPF_SYSCALL": "y",
+    "CONFIG_COMPAT": "y",
+    "CONFIG_IO_URING": "y",
+    "CONFIG_KEYS": "y",
+    "CONFIG_PERF_EVENTS": "y",
+    "CONFIG_STRICT_DEVMEM": "y",
+    "CONFIG_USERFAULTFD": "y",
+    "CONFIG_USER_NS": "y"
+  },
+  "lockdown_state": "[none] integrity confidentiality",
+  "lsm_list": [
+    "lockdown",
+    "yama"
+  ],
+  "meta": {
+    "arch": "x86_64",
+    "collected_at": "2026-08-22T15:04:11Z",
+    "distro": "Ubuntu 24.04.1 LTS",
+    "kernel_release": "6.8.0-45-generic",
+    "ksl_version": "0.1.0",
+    "ran_as_root": true,
+    "skipped": [],
+    "trace_backend": "strace",
+    "trace_seconds": 60
+  },
+  "modules_available": [
+    "bluetooth",
+    "cramfs",
+    "dccp",
+    "firewire_core",
+    "freevxfs",
+    "hfsplus",
+    "jffs2",
+    "n_hdlc",
+    "rds",
+    "tipc",
+    "udf",
+    "usb_storage"
+  ],
+  "modules_loaded": [
+    {
+      "instances": 0,
+      "name": "bluetooth"
+    },
+    {
+      "instances": 1,
+      "name": "usb_storage"
+    }
+  ],
+  "sysctls": {
+    "kernel.dmesg_restrict": "0",
+    "kernel.io_uring_disabled": "0",
+    "kernel.kptr_restrict": "1",
+    "kernel.modules_disabled": "0",
+    "kernel.perf_event_paranoid": "2",
+    "kernel.unprivileged_bpf_disabled": "1",
+    "kernel.unprivileged_userns_clone": "1",
+    "vm.unprivileged_userfaultfd": "1"
+  },
+  "traced_syscalls": {
+    "1105": [
+      "ioctl"
+    ],
+    "1284": [
+      "clone",
+      "io_uring_setup",
+      "keyctl",
+      "setns"
+    ],
+    "1622": [
+      "ioctl"
+    ],
+    "2011": [
+      "accept4",
+      "epoll_wait",
+      "io_uring_setup"
+    ],
+    "980": [
+      "accept4",
+      "keyctl"
+    ]
+  },
+  "workloads": [
+    {
+      "caps_effective": [
+        "CAP_21"
+      ],
+      "comm": "dockerd",
+      "id": "w.dockerd",
+      "no_new_privs": false,
+      "open_paths": [],
+      "pids": [
+        1284
+      ],
+      "seccomp_mode": 0,
+      "uid": 0,
+      "unit": "docker.service"
+    },
+    {
+      "caps_effective": [
+        "CAP_21"
+      ],
+      "comm": "libvirtd",
+      "id": "w.libvirtd",
+      "no_new_privs": false,
+      "open_paths": [
+        "/dev/kvm"
+      ],
+      "pids": [
+        1622
+      ],
+      "seccomp_mode": 0,
+      "uid": 0,
+      "unit": "libvirtd.service"
+    },
+    {
+      "caps_effective": [],
+      "comm": "nginx",
+      "id": "w.nginx",
+      "no_new_privs": false,
+      "open_paths": [],
+      "pids": [
+        2011
+      ],
+      "seccomp_mode": 0,
+      "uid": 33,
+      "unit": "nginx.service"
+    },
+    {
+      "caps_effective": [
+        "CAP_19"
+      ],
+      "comm": "sshd",
+      "id": "w.sshd",
+      "no_new_privs": false,
+      "open_paths": [],
+      "pids": [
+        980
+      ],
+      "seccomp_mode": 2,
+      "uid": 0,
+      "unit": "ssh.service"
+    },
+    {
+      "caps_effective": [
+        "CAP_21"
+      ],
+      "comm": "udisksd",
+      "id": "w.udisksd",
+      "no_new_privs": false,
+      "open_paths": [
+        "/dev/sda1"
+      ],
+      "pids": [
+        1105
+      ],
+      "seccomp_mode": 0,
+      "uid": 0,
+      "unit": "udisks2.service"
+    }
+  ]
+}

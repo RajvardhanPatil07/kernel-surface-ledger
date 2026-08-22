@@ -170,6 +170,32 @@ modules:
       by CIS benchmarks for exactly this reason.
     mitigations: [modprobe blacklist and install /bin/false]
 
+kconfigs:
+  - id: cfg.kconfig_compat
+    name: CONFIG_COMPAT (32-bit emulation)
+    kind: kconfig
+    weight: 5.5
+    subsystem: compat
+    cve_clusters: [compat-ioctls]
+    note: >-
+      The 32-bit ioctl compatibility shims duplicate every driver's argument
+      translation and have produced whole exploit classes on 64-bit kernels.
+      Disable on hosts with no 32-bit userspace.
+
+capabilities:
+  - id: cap.sys_admin_unpriv
+    name: CAP_SYS_ADMIN held by non-root workload
+    kind: capability
+    weight: 9.0
+    subsystem: capabilities
+    cve_clusters: [cap-sys-admin-abuse]
+    note: >-
+      Amplifier: a non-root process holding CAP_SYS_ADMIN unlocks namespace,
+      mount and device ioctls written on the assumption of root. Common in
+      misconfigured containers and setcap'd binaries.
+    mitigations:
+      - systemd NoNewPrivileges=yes and AmbientCapabilities= drop
+
 devnodes:
   - id: dev.mem
     name: /dev/mem
