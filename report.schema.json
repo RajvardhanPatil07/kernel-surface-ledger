@@ -1,0 +1,158 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Kernel Surface Ledger Report",
+  "description": "FROZEN CONTRACT. The collector, engine, and dashboard are built in parallel against this file. Do not change it without updating fixtures/demo.json in the same commit.",
+  "type": "object",
+  "required": ["meta", "surface_elements", "workloads", "ledger", "orphaned", "plan", "score"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["kernel_release", "arch", "distro", "collected_at", "trace_seconds", "ksl_version"],
+      "properties": {
+        "kernel_release": { "type": "string" },
+        "arch": { "type": "string" },
+        "distro": { "type": "string" },
+        "collected_at": { "type": "string", "format": "date-time" },
+        "trace_seconds": { "type": "number" },
+        "trace_backend": { "type": "string", "enum": ["bcc", "perf", "strace", "none"] },
+        "ran_as_root": { "type": "boolean" },
+        "skipped": {
+          "type": "array",
+          "description": "sources that could not be read, with reasons",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": { "type": "string" },
+              "reason": { "type": "string" }
+            }
+          }
+        },
+        "ksl_version": { "type": "string" }
+      }
+    },
+    "surface_elements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "name", "weight", "present", "reachable_unpriv", "used", "cve_clusters"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": {
+            "type": "string",
+            "enum": ["syscall", "module", "kconfig", "sysctl", "devnode", "capability", "namespace", "lsm"]
+          },
+          "name": { "type": "string" },
+          "subsystem": { "type": "string" },
+          "weight": { "type": "number", "minimum": 0, "maximum": 10 },
+          "present": { "type": "boolean" },
+          "reachable_unpriv": { "type": "boolean" },
+          "used": { "type": "boolean" },
+          "gate_reason": { "type": "string" },
+          "cve_clusters": { "type": "array", "items": { "type": "string" } },
+          "mitigations": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "workloads": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "comm", "pids", "touches"],
+        "properties": {
+          "id": { "type": "string" },
+          "comm": { "type": "string" },
+          "unit": { "type": "string" },
+          "pids": { "type": "array", "items": { "type": "integer" } },
+          "uid": { "type": "integer" },
+          "caps_effective": { "type": "array", "items": { "type": "string" } },
+          "seccomp_mode": { "type": "integer" },
+          "touches": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "surface_element ids this workload keeps open"
+          }
+        }
+      }
+    },
+    "ledger": {
+      "type": "array",
+      "description": "one row per workload, sorted by surface_debt descending",
+      "items": {
+        "type": "object",
+        "required": ["workload_id", "surface_debt", "sole_owner_elements", "shared_elements", "reachable_cves"],
+        "properties": {
+          "workload_id": { "type": "string" },
+          "surface_debt": { "type": "number" },
+          "marginal_contribution": { "type": "number" },
+          "sole_owner_elements": { "type": "array", "items": { "type": "string" } },
+          "shared_elements": { "type": "array", "items": { "type": "string" } },
+          "reachable_cves": { "type": "integer" },
+          "explanation": {
+            "type": "string",
+            "description": "LLM-generated prose. MUST NOT affect any numeric field."
+          }
+        }
+      }
+    },
+    "orphaned": {
+      "type": "object",
+      "description": "Removable surface (kind in syscall, module, devnode, namespace, capability) that is present AND reachable_unpriv AND used by no workload. sysctl, kconfig, and lsm elements are excluded: a misconfigured flag is a missing hardening setting, not orphaned surface, and 'used' is not meaningful for it.",
+      "required": ["elements", "total_weight", "cves_neutralizable"],
+      "properties": {
+        "elements": { "type": "array", "items": { "type": "string" } },
+        "total_weight": { "type": "number" },
+        "cves_neutralizable": { "type": "integer" }
+      }
+    },
+    "plan": {
+      "type": "array",
+      "description": "greedy set-cover output, ordered by CVE mass killed per unit breakage cost",
+      "items": {
+        "type": "object",
+        "required": ["step", "action", "targets", "cves_killed", "breakage_risk", "artifact", "revert"],
+        "properties": {
+          "step": { "type": "integer" },
+          "action": {
+            "type": "string",
+            "enum": ["blacklist_module", "seccomp_filter", "sysctl_set", "kconfig_disable", "systemd_confine", "remove_devnode_access"]
+          },
+          "targets": { "type": "array", "items": { "type": "string" } },
+          "cves_killed": { "type": "integer" },
+          "weight_removed": { "type": "number" },
+          "breakage_risk": { "type": "string", "enum": ["none", "low", "medium", "high"] },
+          "breakage_note": { "type": "string" },
+          "detection": { "type": "string" },
+          "requires_reboot": { "type": "boolean" },
+          "artifact": {
+            "type": "object",
+            "properties": {
+              "path": { "type": "string" },
+              "content": { "type": "string" }
+            }
+          },
+          "revert": { "type": "string" }
+        }
+      }
+    },
+    "score": {
+      "type": "object",
+      "required": ["total_surface_weight", "reachable_surface_weight", "reachable_cve_count", "orphan_ratio"],
+      "properties": {
+        "total_surface_weight": { "type": "number" },
+        "reachable_surface_weight": { "type": "number" },
+        "reachable_cve_count": { "type": "integer" },
+        "orphan_ratio": {
+          "type": "number",
+          "description": "orphaned.total_weight / reachable_surface_weight"
+        },
+        "projected_after_plan": {
+          "type": "object",
+          "properties": {
+            "reachable_surface_weight": { "type": "number" },
+            "reachable_cve_count": { "type": "integer" }
+          }
+        }
+      }
+    }
+  }
+}

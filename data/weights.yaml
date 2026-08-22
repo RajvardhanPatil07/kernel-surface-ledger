@@ -1,0 +1,232 @@
+# Kernel Surface Ledger - curated surface risk table.
+#
+# weight (0-10) = f(CVE density in subsystem, unprivileged reachability, exploit maturity)
+#
+# Derived independently from:
+#   - KSPP recommended settings   https://kspp.github.io/Recommended_Settings
+#   - kernel.org CVE feed         https://git.kernel.org/pub/scm/linux/security/vulns.git
+#   - kernel documentation and public local-privilege-escalation writeups
+#
+# This is a documented heuristic, not a claim of ground truth. Every weight carries
+# a justification in its `note`. Agents: read this file, never generate it.
+
+namespaces:
+  - id: ns.userns_unpriv
+    name: unprivileged user namespaces
+    kind: namespace
+    weight: 9.5
+    subsystem: namespaces
+    gate: kernel.unprivileged_userns_clone
+    cve_clusters: [userns-lpe, netfilter-via-userns]
+    note: >-
+      Surface amplifier rather than a single hole: grants unprivileged access to
+      subsystems that assume CAP_SYS_ADMIN. Repeatedly the first link in modern
+      LPE chains.
+    mitigations:
+      - sysctl kernel.unprivileged_userns_clone=0
+      - systemd RestrictNamespaces=
+
+syscalls:
+  - id: sc.io_uring_setup
+    name: io_uring_setup
+    kind: syscall
+    weight: 9.0
+    subsystem: io_uring
+    cve_clusters: [io_uring-uaf, io_uring-refcount]
+    note: >-
+      Young, large, highly asynchronous. Dense in use-after-free and lifetime
+      bugs. Several large operators disable it outright in production.
+    mitigations:
+      - sysctl kernel.io_uring_disabled=2
+      - seccomp deny io_uring_setup,io_uring_enter,io_uring_register
+
+  - id: sc.bpf_unpriv
+    name: bpf (unprivileged)
+    kind: syscall
+    weight: 8.5
+    subsystem: bpf
+    gate: kernel.unprivileged_bpf_disabled
+    cve_clusters: [bpf-verifier]
+    note: >-
+      Verifier logic bugs translate almost directly into arbitrary kernel
+      read/write. Should never be reachable unprivileged.
+    mitigations:
+      - sysctl kernel.unprivileged_bpf_disabled=1
+
+  - id: sc.userfaultfd
+    name: userfaultfd
+    kind: syscall
+    weight: 8.0
+    subsystem: mm
+    gate: vm.unprivileged_userfaultfd
+    cve_clusters: [heap-grooming-primitive]
+    note: >-
+      Rarely a vulnerability itself; it is the stabilisation primitive that turns
+      unreliable kernel races into deterministic exploits.
+    mitigations:
+      - sysctl vm.unprivileged_userfaultfd=0
+      - seccomp deny userfaultfd
+
+  - id: sc.perf_event_open
+    name: perf_event_open
+    kind: syscall
+    weight: 7.5
+    subsystem: perf
+    gate: kernel.perf_event_paranoid
+    cve_clusters: [perf-lpe, infoleak]
+    note: >-
+      Long history of privilege escalation. Unnecessary for the overwhelming
+      majority of hosts that are not actively profiling.
+    mitigations:
+      - sysctl kernel.perf_event_paranoid=3
+      - seccomp deny perf_event_open
+
+  - id: sc.keyctl
+    name: keyctl
+    kind: syscall
+    weight: 6.5
+    subsystem: keys
+    cve_clusters: [keyring-uaf, refcount-overflow]
+    note: >-
+      Recurrent reference-counting and use-after-free defects, reachable by any
+      unprivileged process.
+    mitigations:
+      - seccomp deny keyctl,add_key,request_key
+
+modules:
+  - id: mod.dccp
+    name: dccp
+    kind: module
+    weight: 7.0
+    subsystem: net
+    cve_clusters: [dccp-uaf, net-legacy-proto]
+    note: >-
+      Effectively unused transport protocol with repeated UAF history, and
+      autoloadable by an unprivileged socket() call.
+    mitigations: [modprobe blacklist and install /bin/false]
+
+  - id: mod.rds
+    name: rds
+    kind: module
+    weight: 6.5
+    subsystem: net
+    cve_clusters: [net-legacy-proto]
+    note: Datacenter-only protocol, autoloadable, thin audit coverage.
+    mitigations: [modprobe blacklist and install /bin/false]
+
+  - id: mod.tipc
+    name: tipc
+    kind: module
+    weight: 6.5
+    subsystem: net
+    cve_clusters: [net-legacy-proto, remote-heap-overflow]
+    note: Remote heap overflow history (CVE-2021-43267). Almost never required.
+    mitigations: [modprobe blacklist and install /bin/false]
+
+  - id: mod.n_hdlc
+    name: n_hdlc
+    kind: module
+    weight: 5.5
+    subsystem: tty
+    cve_clusters: [tty-ldisc-lpe]
+    note: Legacy line discipline, a classic local privilege escalation target.
+    mitigations: [modprobe blacklist and install /bin/false]
+
+  - id: mod.bluetooth
+    name: bluetooth
+    kind: module
+    weight: 6.0
+    subsystem: bluetooth
+    cve_clusters: [bluetooth-parsing]
+    note: Large protocol parsing surface, irrelevant on servers and most VMs.
+    mitigations: [modprobe blacklist and install /bin/false]
+
+  - id: mod.firewire_core
+    name: firewire-core
+    kind: module
+    weight: 6.0
+    subsystem: firewire
+    cve_clusters: [dma-physical-access]
+    note: DMA-capable legacy bus. Physical-access memory disclosure risk.
+    mitigations: [modprobe blacklist and install /bin/false]
+
+  - id: mod.usb_storage
+    name: usb-storage
+    kind: module
+    weight: 4.5
+    subsystem: usb
+    cve_clusters: [usb-parsing]
+    note: Only blacklist where the host must never accept USB mass storage.
+    mitigations: [modprobe blacklist, USBGuard]
+
+  - id: mod.legacy_fs
+    name: cramfs / freevxfs / jffs2 / hfsplus / udf
+    kind: module
+    weight: 5.0
+    subsystem: fs
+    cve_clusters: [fs-image-parsing]
+    note: >-
+      Legacy filesystem image parsers, autoloaded on mount attempt. Blacklisted
+      by CIS benchmarks for exactly this reason.
+    mitigations: [modprobe blacklist and install /bin/false]
+
+devnodes:
+  - id: dev.mem
+    name: /dev/mem
+    kind: devnode
+    weight: 9.0
+    subsystem: mm
+    cve_clusters: [physical-memory-access]
+    note: Direct physical memory access. Must be gated by STRICT_DEVMEM and lockdown.
+    mitigations: [boot lockdown=confidentiality, CONFIG_IO_STRICT_DEVMEM]
+
+  - id: dev.kvm
+    name: /dev/kvm
+    kind: devnode
+    weight: 7.0
+    subsystem: kvm
+    cve_clusters: [kvm-ioctl]
+    note: Very large ioctl surface. Needed only by virtualisation workloads.
+    mitigations: [restrict group ownership to kvm]
+
+sysctls:
+  - id: cfg.module_autoload
+    name: unrestricted module autoload
+    kind: sysctl
+    weight: 7.5
+    subsystem: modules
+    cve_clusters: [autoload-amplifier]
+    note: >-
+      Central to the reachability model: autoload turns "not loaded" into "one
+      socket() call away", so an unloaded vulnerable module is still reachable.
+    mitigations:
+      - sysctl kernel.modules_disabled=1 after boot
+      - modprobe install <mod> /bin/false
+
+  - id: cfg.no_kptr_restrict
+    name: kernel.kptr_restrict < 2
+    kind: sysctl
+    weight: 5.0
+    subsystem: infoleak
+    cve_clusters: [infoleak]
+    note: kptr_restrict=1 still leaks addresses to root; 2 is required to fully mask.
+    mitigations: [sysctl kernel.kptr_restrict=2]
+
+  - id: cfg.dmesg_open
+    name: kernel.dmesg_restrict = 0
+    kind: sysctl
+    weight: 4.0
+    subsystem: infoleak
+    cve_clusters: [infoleak]
+    note: Kernel log contents assist the information-gathering phase of exploitation.
+    mitigations: [sysctl kernel.dmesg_restrict=1]
+
+lsm:
+  - id: cfg.no_lockdown
+    name: lockdown LSM inactive
+    kind: lsm
+    weight: 6.0
+    subsystem: lsm
+    cve_clusters: [kernel-integrity]
+    note: Without lockdown, root can read and modify kernel memory through several paths.
+    mitigations: [boot with lockdown=confidentiality]
