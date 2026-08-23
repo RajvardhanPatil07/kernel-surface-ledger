@@ -333,15 +333,20 @@ def annotate_workloads(raw: dict, elements: list[dict]) -> list[dict]:
                         touches.add(eid)
                 if name in NAMESPACE_TRIGGERS and "ns.userns_unpriv" in by_id:
                     touches.add("ns.userns_unpriv")
-        schema_workload = {
+        schema_workload: dict = {
             "id": workload["id"],
             "comm": workload["comm"],
-            "unit": workload.get("unit"),
-            "pids": sorted(workload["pids"]),
-            "uid": workload["uid"],
-            "caps_effective": sorted(workload["caps_effective"]),
-            "seccomp_mode": workload["seccomp_mode"],
-            "touches": sorted(touches),
         }
+        if workload.get("unit"):
+            schema_workload["unit"] = str(workload["unit"])
+        schema_workload.update(
+            {
+                "pids": sorted(workload["pids"]),
+                "uid": workload["uid"],
+                "caps_effective": sorted(workload["caps_effective"]),
+                "seccomp_mode": workload["seccomp_mode"],
+                "touches": sorted(touches),
+            }
+        )
         annotated.append(schema_workload)
     return sorted(annotated, key=lambda w: w["id"])

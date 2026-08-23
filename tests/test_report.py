@@ -14,6 +14,7 @@ from engine import report
 
 ROOT = Path(__file__).resolve().parent.parent
 SCHEMA = json.loads((ROOT / "report.schema.json").read_text())
+W_ID = "w.curl"
 
 
 class ReportTest(unittest.TestCase):
@@ -39,6 +40,34 @@ class ReportTest(unittest.TestCase):
         built = report.build_report(raw, load_weights(), load_cve_map())
         errors = list(Draft7Validator(SCHEMA).iter_errors(built))
         self.assertEqual([], errors)
+
+    def test_unitless_workload_never_emits_null_unit(self) -> None:
+        """Processes outside any systemd unit must omit `unit`, not send null."""
+        raw = json.loads(json.dumps(RAW_MINIMAL))
+        raw["workloads"].append(
+            {
+                "id": W_ID,
+                "comm": "curl",
+                "unit": None,
+                "pids": [77],
+                "uid": 1000,
+                "caps_effective": [],
+                "seccomp_mode": 0,
+                "no_new_privs": False,
+                "open_paths": [],
+            }
+        )
+        built = report.build_report(raw, load_weights(), load_cve_map())
+        errors = sorted(Draft7Validator(SCHEMA).iter_errors(built), key=lambda e: list(e.path))
+        self.assertEqual([], [e.message for e in errors])
+        curl = next(w for w in built["workloads"] if w["id"] == W_ID)
+        self.assertNotIn("unit", curl)
+
+    def test_present_workload_keeps_its_unit(self) -> None:
+        nginx = next(
+            w for w in self.report["workloads"] if w["id"] == "w.nginx"
+        )
+        self.assertEqual("nginx.service", nginx["unit"])
 
     def test_score_fields_match_elements(self) -> None:
         elements = self.report["surface_elements"]
