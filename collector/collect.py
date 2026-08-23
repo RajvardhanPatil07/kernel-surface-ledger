@@ -19,6 +19,8 @@ from collector import devnodes, kconfig, modules, processes, sysctl, syscalls
 
 KSL_VERSION = "0.1.0"
 
+DEFAULT_TRACE_SECONDS = 5
+
 
 def detect_distro() -> str:
     """Return a human distro string from /etc/os-release, with a fallback."""
@@ -32,7 +34,7 @@ def detect_distro() -> str:
     return "unknown"
 
 
-def collect_raw() -> dict[str, object]:
+def collect_raw(trace_seconds: int = DEFAULT_TRACE_SECONDS) -> dict[str, object]:
     """Gather every read-only source into the raw evidence snapshot."""
     skips: list[dict[str, str]] = []
 
@@ -48,11 +50,8 @@ def collect_raw() -> dict[str, object]:
     procs = processes.enumerate_processes(skips)
     workloads = processes.group_workloads(procs)
 
-    trace_backend = syscalls.detect_backend()
-    if trace_backend is None:
-        skips.append({"source": "trace:auto", "reason": "no tracer binary in PATH"})
-    trace_seconds = 0
     traced = syscalls.trace_syscalls(trace_seconds, backend="auto", skips=skips)
+    trace_backend = syscalls.detect_backend() if traced else None
 
     return {
         "meta": {
@@ -92,9 +91,15 @@ def main(argv: list[str] | None = None) -> int:
     """Run collection and write raw.json."""
     parser = argparse.ArgumentParser(prog="collector", description=__doc__)
     parser.add_argument("-o", "--output", default="raw.json", help="output path (default: raw.json)")
+    parser.add_argument(
+        "--trace-seconds",
+        type=int,
+        default=DEFAULT_TRACE_SECONDS,
+        help="syscall observation window in seconds; 0 disables tracing (default: %(default)s)",
+    )
     args = parser.parse_args(argv)
 
-    snapshot = collect_raw()
+    snapshot = collect_raw(trace_seconds=args.trace_seconds)
     out = Path(args.output)
     out.write_text(json.dumps(snapshot, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
