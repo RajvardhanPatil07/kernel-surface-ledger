@@ -67,7 +67,7 @@ def read_process(pid_dir: Path, skips: list[dict[str, str]]) -> dict[str, object
         try:
             exe = os.readlink(exe_path)
         except PermissionError as exc:
-            skipped.append(
+            skips.append(
                 {"source": f"process:{pid_dir.name}", "reason": f"exe unreadable: {exc}"}
             )
             return None
@@ -92,11 +92,11 @@ def read_process(pid_dir: Path, skips: list[dict[str, str]]) -> dict[str, object
                 if target.startswith("/dev/") or target.startswith("/proc/"):
                     open_paths.add(target)
         except PermissionError as exc:
-            skipped.append(
+            skips.append(
                 {"source": f"process:{pid_dir.name}/fd", "reason": f"permission denied: {exc}"}
             )
         except OSError as exc:
-            skipped.append({"source": f"process:{pid_dir.name}/fd", "reason": str(exc)})
+            skips.append({"source": f"process:{pid_dir.name}/fd", "reason": str(exc)})
         try:
             open_paths.update(parse_map_paths((pid_dir / "maps").read_text(encoding="utf-8", errors="replace")))
         except (OSError, PermissionError):
@@ -115,10 +115,10 @@ def read_process(pid_dir: Path, skips: list[dict[str, str]]) -> dict[str, object
             "open_paths": sorted(open_paths),
         }
     except FileNotFoundError:
-        skipped.append({"source": f"process:{pid_dir.name}", "reason": "exited during scan"})
+        skips.append({"source": f"process:{pid_dir.name}", "reason": "exited during scan"})
         return None
     except PermissionError as exc:
-        skipped.append({"source": f"process:{pid_dir.name}", "reason": f"permission denied: {exc}"})
+        skips.append({"source": f"process:{pid_dir.name}", "reason": f"permission denied: {exc}"})
         return None
 
 
