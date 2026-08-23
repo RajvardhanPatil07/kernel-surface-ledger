@@ -1,0 +1,6 @@
+[
+  {"pid": 812, "comm": "nginx", "syscall": "epoll_wait", "count": 4021},
+  {"pid": 812, "comm": "nginx", "syscall": "accept4", "count": 87},
+  {"pid": 913, "comm": "dockerd", "syscall": "io_uring_enter", "count": 12},
+  {"pid": 913, "comm": "dockerd", "syscall": "userfaultfd", "count": 1}
+]

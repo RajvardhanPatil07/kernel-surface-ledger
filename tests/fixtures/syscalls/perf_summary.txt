@@ -1,0 +1,16 @@
+Summary of events:
+
+,
+ nginx (812), 4203 events, 41.2%
+
+   95.62%   4021  epoll_wait
+    2.07%     87  accept4
+    1.00%     42  futex
+
+ dockerd (913), 512 events, 5.0%
+
+   88.50%    453  io_uring_enter
+    0.59%      3  keyctl
+   10.91%     56  bpf
+
+,

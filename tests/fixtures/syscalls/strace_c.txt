@@ -1,0 +1,10 @@
+strace: Process 913 attached
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+  44.44    0.002000          20       100           epoll_wait
+  22.22    0.001000          50        20        10 openat
+  33.34    0.001500         750         2             io_uring_setup
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.004500                   122        10 total
+strace: Process 913 detached
+<detached ...>
