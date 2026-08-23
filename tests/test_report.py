@@ -41,6 +41,23 @@ class ReportTest(unittest.TestCase):
         errors = list(Draft7Validator(SCHEMA).iter_errors(built))
         self.assertEqual([], errors)
 
+    def test_unknown_trace_backend_degrades_to_none(self) -> None:
+        """A foreign backend value must not crash and must not claim evidence."""
+        raw = raw_with_trace_none()
+        raw["meta"]["trace_backend"] = "future-ebpf-thing"
+        built = report.build_report(raw, load_weights(), load_cve_map())
+        self.assertEqual("none", built["meta"]["trace_backend"])
+        errors = list(Draft7Validator(SCHEMA).iter_errors(built))
+        self.assertEqual([], errors)
+
+    def test_unknown_backend_excludes_syscalls_from_orphaned(self) -> None:
+        """Unknown backend means usage is unknown: no syscall may be orphaned."""
+        raw = raw_with_trace_none()
+        raw["meta"]["trace_backend"] = "future-ebpf-thing"
+        built = report.build_report(raw, load_weights(), load_cve_map())
+        kinds = {e["kind"] for e in built["surface_elements"] if e["id"] in built["orphaned"]["elements"]}
+        self.assertNotIn("syscall", kinds)
+
     def test_unitless_workload_never_emits_null_unit(self) -> None:
         """Processes outside any systemd unit must omit `unit`, not send null."""
         raw = json.loads(json.dumps(RAW_MINIMAL))

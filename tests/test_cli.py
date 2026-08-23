@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import tempfile
 import unittest
@@ -50,6 +52,30 @@ class CliTest(unittest.TestCase):
         bad = Path(self.tmp.name) / "bad.json"
         bad.write_text('{"meta": {}}')
         self.assertEqual(1, ksl_main(["check", str(bad)]))
+
+    def test_scan_missing_raw_fails_cleanly(self) -> None:
+        """A missing snapshot must print an error, never a traceback."""
+        missing = str(Path(self.tmp.name) / "absent.json")
+        with contextlib.redirect_stderr(io.StringIO()) as err:
+            with self.assertRaises(SystemExit) as ctx:
+                ksl_main(["scan", "--raw", missing, "-o", self.out1])
+        self.assertEqual(1, ctx.exception.code)
+        self.assertIn("does not exist", err.getvalue())
+
+    def test_scan_garbage_raw_fails_cleanly(self) -> None:
+        garbage = Path(self.tmp.name) / "garbage.json"
+        garbage.write_text("not json{")
+        with contextlib.redirect_stderr(io.StringIO()) as err:
+            with self.assertRaises(SystemExit) as ctx:
+                ksl_main(["scan", "--raw", str(garbage), "-o", self.out1])
+        self.assertEqual(1, ctx.exception.code)
+        self.assertIn("not valid JSON", err.getvalue())
+
+    def test_version_works_without_subcommand(self) -> None:
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            self.assertEqual(0, ksl_main(["--version"]))
+        self.assertTrue(buf.getvalue().strip())
 
 
 if __name__ == "__main__":

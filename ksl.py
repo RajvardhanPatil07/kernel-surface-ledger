@@ -32,6 +32,19 @@ def load_curated() -> tuple[dict, dict]:
     return weights, cve_map
 
 
+def _load_json(path: str) -> dict:
+    """Load a JSON file, exiting with a friendly message on failure."""
+    try:
+        return json.loads(Path(path).read_text())
+    except FileNotFoundError:
+        print(f"error: {path} does not exist", file=sys.stderr)
+    except IsADirectoryError:
+        print(f"error: {path} is a directory, not a file", file=sys.stderr)
+    except json.JSONDecodeError as exc:
+        print(f"error: {path} is not valid JSON: {exc}", file=sys.stderr)
+    raise SystemExit(1)
+
+
 def cmd_scan(args: argparse.Namespace) -> int:
     """Collect (or reuse) a snapshot, score it, optionally narrate it."""
     load_dotenv()  # explicit env vars always win over .env
@@ -39,7 +52,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
     from engine import report as report_engine
 
     if args.raw:
-        raw = json.loads(Path(args.raw).read_text())
+        raw = _load_json(args.raw)
         source = f"snapshot {args.raw}"
     else:
         raw = collect_raw()
@@ -80,7 +93,7 @@ def cmd_check(args: argparse.Namespace) -> int:
     """Validate a report against the frozen schema and recompute invariants."""
     from engine.report import validate_report
 
-    report = json.loads(Path(args.report).read_text())
+    report = _load_json(args.report)
     try:
         validate_report(report)
     except ValueError as exc:
@@ -93,7 +106,8 @@ def cmd_check(args: argparse.Namespace) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="ksl", description=__doc__)
     parser.add_argument("--version", action="store_true", help="print version and exit")
-    sub = parser.add_subparsers(dest="command", required=True)
+    sub = parser.add_subparsers(dest="command")
+    sub.required = False
 
     scan = sub.add_parser("scan", help="collect, score, and narrate a host")
     scan.add_argument("-o", "--output", default="report.json", help="output report path")
@@ -119,6 +133,9 @@ def main(argv: list[str] | None = None) -> int:
 
         print(KSL_VERSION)
         return 0
+    if args.command is None:
+        parser.print_help()
+        return 1
     return args.func(args)
 
 

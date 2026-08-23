@@ -52,7 +52,10 @@ def build_report(raw: dict, weights: dict, cve_map: dict) -> dict:
     elements = reachability.compute_elements(raw, weights)
     workloads = reachability.annotate_workloads(raw, elements)
 
-    trace_backend = raw.get("meta", {}).get("trace_backend", "none")
+    raw_backend = raw.get("meta", {}).get("trace_backend", "none")
+    # An unrecognised backend value must not kill the report, and must not
+    # be trusted as evidence that syscall usage was observed.
+    trace_backend = raw_backend if raw_backend in ("bcc", "perf", "strace", "none") else "none"
     ledger = attribution.compute_ledger(elements, workloads, cve_map)
     orphaned = attribution.compute_orphaned(elements, trace_backend, cve_map)
     plan = setcover.build_plan(elements, workloads, orphaned, cve_map)

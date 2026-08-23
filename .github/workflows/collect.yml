@@ -46,6 +46,8 @@ jobs:
                 '| orphaned', len(built['orphaned']['elements']))
           PY
       - name: Commit the fresh scan
+        env:
+          COMMIT_SHA: ${{ github.sha }}
         run: |
           git config user.name ksl-bot
           git config user.email actions@users.noreply.github.com
@@ -55,6 +57,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "no changes to report"
           else
-            git commit -m "scan: refresh runner report from ${{ github.sha }}"
+            git commit -m "scan: refresh runner report from $COMMIT_SHA"
             git push
           fi
