@@ -20,6 +20,34 @@ ORPHANED       userfaultfd, perf_event_open,        58.0       -             23
 
 That last row is the point. Fifty-eight weighted units of unprivileged-reachable kernel surface, on a normal server, that no running workload uses. Removing it is provably zero-impact - nothing touches it.
 
+## Verified on a real host
+
+The demo fixture is synthetic by design; the numbers below are not. They come from the scheduled CI scan of a **stock Ubuntu 24.04 GitHub Actions runner** (kernel 6.17.0-1022-azure) — committed to this repo as [`data/reports/report.json`](data/reports/report.json) and rendered at the [live dashboard](https://rajvardhanpatil07.github.io/kernel-surface-ledger/):
+
+| Finding on the real host | Value |
+| --- | --- |
+| Reachable surface | 61.5 of 149 weighted units |
+| Reachable CVE paths | **14 → 6** once the 5-step plan applies (8 killed) |
+| Orphaned surface | 28.0 weighted units · 7 neutralizable CVEs |
+| Notable orphans | `/dev/kvm` (mode 0660, usable by non-root), `tipc` + 4 legacy filesystem modules autoloadable, unprivileged user namespaces open |
+| Top of the plan | seccomp `io_uring_setup` (3 CVEs, breakage: none), batched sysctl fragment (5 CVEs) |
+
+Nothing on that machine was staged for the tool to find. Reproduce it anywhere: trigger the `collect` workflow from the Actions tab, or run `python ksl.py scan` on any Linux box and drop the resulting `report.json` onto the dashboard.
+
+## How this differs from prior work
+
+| Existing approach | Examples | What it misses |
+| --- | --- | --- |
+| Per-application policies | Confine, Chestnut, OCI seccomp hooks | one container whitelisted in isolation |
+| Whole-kernel aggregate | kernel-hardening-checker, Kurmus et al. | ~180 unranked findings, nobody held responsible |
+| Debloat-and-rebuild | Hacksaw, KASR, FACE-CHANGE | not a live host-assessment tool |
+
+No prior tool attributes *shared* surface across concurrently running workloads, computes *host-wide* orphaned surface, or emits a *breakage-costed* counterfactual plan. That intersection is the contribution; the full survey with citations lives in [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md).
+
+## From one host to a fleet
+
+Scaling out is a reduce, not a rearchitecture. `report.schema.json` is a frozen contract, so every host emits a self-contained, schema-valid document with no server-side state. Running the same read-only collector on 500 hosts (via SSH, a tiny agent, or a CI job — the scheduled `collect` workflow already is one) yields 500 comparable documents; aggregation is then a plain map-reduce: sum the weights, union the CVE sets, merge ledgers keyed by workload id. The properties that make single-host output trustworthy — determinism, sorted collections, byte-identical reruns over the same snapshot — are exactly the properties that make cross-host numbers well-defined and comparable. Fleet roll-up views are a rendering problem deliberately deferred, not missing architecture.
+
 ## The three contributions
 
 1. **Attribution.** Prior work is either per-application (Confine, Chestnut, seccomp generators - one container, one whitelist) or whole-kernel aggregate (Kurmus, kernel-hardening-checker - one global score). Neither models the real situation: many concurrent workloads sharing one kernel, where surface is a *jointly held liability*. `ksl` computes per-workload marginal contribution over a bipartite blame graph.

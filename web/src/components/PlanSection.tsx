@@ -60,7 +60,7 @@ export function PlanSection({ report }: { report: Report }) {
                   <code className="truncate text-xs text-ink-dim">{step.artifact.path}</code>
                   <CopyButton text={step.artifact.content ?? ''} />
                 </figcaption>
-                <pre className="max-h-72 overflow-auto p-4 text-xs leading-relaxed text-ink-dim">
+                <pre className="max-h-72 overflow-auto p-4 text-xs leading-relaxed text-ink-dim whitespace-pre-wrap break-words">
                   {step.artifact.content}
                 </pre>
               </figure>
