@@ -4,6 +4,8 @@
 
 `ksl` treats Linux kernel attack surface as an **accountability problem**. It builds a blame graph across every live workload on the host, attributes each dangerous piece of shared kernel surface to the process keeping it open, identifies surface that *nothing* touches, and computes the minimal set of changes that kills the most reachable CVE paths per unit of breakage risk.
 
+![ksl in 15 seconds: walk the attribution ledger, orphaned surface, reachability gates and hardening plan — then drop a real runner scan and regression watch diffs the two hosts](docs/demo/demo.gif)
+
 ```
 SURFACE DEBT LEDGER                              debt   sole-owner   reachable CVEs
 ---------------------------------------------------------------------------------
@@ -46,7 +48,7 @@ No prior tool attributes *shared* surface across concurrently running workloads,
 
 ## From one host to a fleet
 
-Scaling out is a reduce, not a rearchitecture. `report.schema.json` is a frozen contract, so every host emits a self-contained, schema-valid document with no server-side state. Running the same read-only collector on 500 hosts (via SSH, a tiny agent, or a CI job — the scheduled `collect` workflow already is one) yields 500 comparable documents; aggregation is then a plain map-reduce: sum the weights, union the CVE sets, merge ledgers keyed by workload id. The properties that make single-host output trustworthy — determinism, sorted collections, byte-identical reruns over the same snapshot — are exactly the properties that make cross-host numbers well-defined and comparable. Fleet roll-up views are a rendering problem deliberately deferred, not missing architecture.
+Scaling out is a reduce, not a rearchitecture. `report.schema.json` is a frozen contract, so every host emits a self-contained, schema-valid document with no server-side state. Running the same read-only collector on 500 hosts (via SSH, a tiny agent, or a CI job — the scheduled `collect` workflow already is one) yields 500 comparable documents; aggregation is then a plain map-reduce: sum the weights, union the CVE sets, merge ledgers keyed by workload id. **That reduce is already written** — `scripts/fleet_rollup.py` takes N reports and emits the per-host table plus the fleet-wide orphaned-surface list ("orphaned on k/N hosts"). The properties that make single-host output trustworthy — determinism, sorted collections, byte-identical reruns over the same snapshot — are exactly the properties that make cross-host numbers well-defined and comparable. Fleet roll-up views are a rendering problem deliberately deferred, not missing architecture.
 
 ## The three contributions
 

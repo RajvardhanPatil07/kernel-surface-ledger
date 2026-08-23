@@ -9,6 +9,7 @@ import { LedgerTable } from '@/components/ksl/LedgerTable'
 import { OrphanedGrid } from '@/components/ksl/OrphanedGrid'
 import { PlanSteps } from '@/components/ksl/PlanSteps'
 import { Provenance } from '@/components/ksl/Provenance'
+import { DiffSection } from '@/components/ksl/DiffSection'
 import { Section } from '@/components/ksl/primitives'
 
 // The bundled demo report renders with zero network calls.
@@ -18,6 +19,7 @@ const MAX_BYTES = 25 * 1024 * 1024
 
 export default function App() {
   const [report, setReport] = useState<KslReport>(BUNDLED)
+  const [baseReport, setBaseReport] = useState<KslReport | null>(null)
   const [sourceLabel, setSourceLabel] = useState('bundled demo scan')
   const [failure, setFailure] = useState<LoadFailure | null>(null)
   const [dragging, setDragging] = useState(false)
@@ -91,7 +93,10 @@ export default function App() {
 
     setReport(result.report)
     setSourceLabel(file.name)
-  }, [])
+    // Dropping over a loaded report turns the previous one into the
+    // comparison base: regression watch comes up automatically.
+    setBaseReport(report)
+  }, [report])
 
   return (
     <main
@@ -131,6 +136,10 @@ export default function App() {
         failure={failure}
         onDismissFailure={() => setFailure(null)}
       />
+
+      {baseReport ? (
+        <DiffSection base={baseReport} next={report} onClose={() => setBaseReport(null)} />
+      ) : null}
 
       <Section
         id="ledger"
@@ -186,9 +195,15 @@ export default function App() {
 
       <footer className="border-t border-border py-8">
         <div className="mx-auto max-w-[1400px] px-4 text-[11px] text-muted-foreground sm:px-6">
-          Kernel Surface Ledger (ksl) — kernel attack surface as an accountability problem. Reports
-          are rendered from the frozen report.schema.json contract; drag any schema-valid
-          report.json onto this page.
+          <p>
+            Kernel Surface Ledger (ksl) — kernel attack surface as an accountability problem.
+            Reports are rendered from the frozen report.schema.json contract; drag any schema-valid
+            report.json onto this page.
+          </p>
+          <p className="mt-1">
+            narrative fields are LLM-written; every figure is deterministic engine output —
+            running the scan with --no-explain produces byte-identical numbers.
+          </p>
         </div>
       </footer>
     </main>

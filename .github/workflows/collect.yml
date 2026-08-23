@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install dependencies
-        run: pip install jsonschema PyYAML
+        run: pip install "jsonschema==4.26.*" "PyYAML==6.*"
       - name: Generate background workloads for observation
         run: |
           python -m http.server 8080 --directory /tmp &
