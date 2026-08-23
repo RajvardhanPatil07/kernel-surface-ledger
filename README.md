@@ -49,10 +49,36 @@ The scoring engine is fully deterministic. The LLM does three things it is genui
 - **Breakage prediction** - what could break, how to detect it, how to revert it.
 
 ```bash
-ksl scan --explain-only=false   # skips every LLM call
+python ksl.py scan --raw fixtures/raw-demo.json --no-explain   # skips every LLM call
 ```
 
 Produces **byte-identical scored output**. The AI explains and generates. It never decides. This is enforced by a test.
+
+## Usage
+
+```bash
+# full pipeline on the live host (read-only; degrades gracefully as non-root)
+python ksl.py scan -o report.json --save-raw raw.json
+
+# offline demo: re-score the committed snapshot, no network, no API key
+python ksl.py scan --raw fixtures/raw-demo.json -o report.json
+
+# skip every LLM call - numeric output is byte-identical
+python ksl.py scan --raw fixtures/raw-demo.json --no-explain
+
+# validate any report against the frozen schema contract
+python ksl.py check report.json
+```
+
+The static dashboard (`web/`) loads the latest runner-generated report, falls back to a bundled demo scan, and accepts any `report.json` via drag-and-drop.
+
+## Tests
+
+```bash
+python -m unittest discover tests
+```
+
+Covers schema validity, byte-identical determinism, the LLM-independence invariant, reachability gates, attribution math, set-cover planning, and the CLI.
 
 ## Safety
 
@@ -60,7 +86,7 @@ The collector is **strictly read-only**. It never loads or unloads a module, nev
 
 ## Status
 
-Early. The schema contract (`report.schema.json`), the curated risk model (`data/weights.yaml`), the prompt templates, and a schema-valid demo fixture are in place. See [`docs/TASKS.md`](docs/TASKS.md) for the implementation plan and [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md) for how this differs from existing work.
+All five phases implemented: read-only collector (kconfig, modules with autoload, processes, sysctls, devnodes, three-backend syscall tracing), deterministic engine (reachability gates, blame-graph attribution, greedy set-cover planner), explain layer with disk-cached LLM narration and deterministic fallback, unified `ksl` CLI, and the static dashboard with scheduled runner scans deployed via GitHub Pages. See [`docs/TASKS.md`](docs/TASKS.md) for the plan and [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md) for how this differs from existing work.
 
 ## Licensing note
 
