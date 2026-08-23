@@ -37,7 +37,7 @@ Evaluation settings: judges open a GitHub Pages URL or clone the repo and run it
 
 ## Brand Commitments
 
-Pinned visual world (docs/TASKS.md): dark terminal aesthetic — JetBrains Mono, near-black background, single amber accent. Name: Kernel Surface Ledger (`ksl`). Voice: precise, honest about uncertainty, zero marketing fluff; the tool's own copy style ("touched by nothing — free to remove") is the register.
+Pinned visual world (docs/TASKS.md): dark terminal aesthetic — JetBrains Mono, near-black oklch surfaces, amber as the single verdict accent (cyan reserved semantically for the orphaned-surface state, red for errors). Name: Kernel Surface Ledger (`ksl`). Voice: precise, honest about uncertainty, zero marketing fluff; the tool's own copy style ("touched by nothing — free to remove") is the register.
 
 ## Evidence on Hand
 

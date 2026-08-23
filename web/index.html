@@ -7,33 +7,32 @@
     <meta name="color-scheme" content="dark" />
     <meta
       name="description"
-      content="Kernel Surface Ledger — who is responsible for your Linux kernel attack surface. Attribution, orphaned surface, and a breakage-costed hardening plan."
+      content="Kernel Surface Ledger — who is responsible for your Linux kernel attack surface. Attribution, orphaned surface, three-tier reachability gates, and a breakage-costed hardening plan."
     />
     <meta property="og:title" content="Kernel Surface Ledger" />
     <meta property="og:description" content="Every tool tells you what kernel surface is exposed. None tell you who is responsible." />
-    <title>Kernel Surface Ledger</title>
+    <title>Kernel Surface Ledger — who owns your kernel attack surface</title>
   </head>
   <body>
     <!--
-      DIRECTION CONTRACT (code-led, brief-pinned terminal world)
+      DIRECTION CONTRACT (code-led, terminal world, five numbered sections)
       THESIS: the page is a rendered audit finding, not a dashboard: the kernel's own
       evidence typeset like a terminal report you can interrogate.
-      OWN-WORLD: near-black #0A0A0A ground; amber #F5A623 carries every verdict;
-      JetBrains Mono everywhere data lives; hairline #262626 rules; no cards - ruled
-      sections like a printed ledger; tabular numerals for all figures.
-      STORY: a judge reads one number (reachable CVEs), watches it fall to its projected
-      value, then traces who owes what in the blame graph, and can restate attribution
-      in one sentence on the way out.
-      FIRST VIEWPORT: report header line (host / kernel / backend metadata), giant
-      reachable_cve_count left falling via animated arrow to projected_after_plan right,
-      orphaned total as an amber underlined sentence beneath; primary action is the
-      ledger below.
-      FORM: code-led; brief pinned from docs/TASKS.md Task 4; seed ksl-ledger-report-v1.
-      SEMANTIC COLOR NOTE: amber carries every verdict and risk state; green/red exist
-      only as semantic states (breakage:none, copy confirmation, errors), never as
-      decoration, never for headline figures.
-      FINISH: unreviewed and undocumented is unfinished; this build ends with the finish
-      review, the verdict, DESIGN.md, and every shipping raster carrying its provenance.
+      OWN-WORLD: near-black oklch ground; one amber accent carries every verdict;
+      JetBrains Mono everywhere data lives; hairline rules; flat bordered surfaces,
+      no cards, no rounded corners; tabular numerals for all figures.
+      STORY: a judge reads the four header figures (reachable weight and CVEs falling
+      to their projected values), then walks 01 attribution -> 02 orphaned surface ->
+      03 reachability gates -> 04 hardening plan -> 05 provenance, and can restate
+      attribution in one sentence on the way out.
+      FIRST VIEWPORT: title + one-line thesis, section nav, host metadata line,
+      partial-data notice when sources were skipped, and the four figures.
+      FORM: whole-page drag-and-drop for any schema-valid report.json; failures are
+      typed and recoverable; the bundled demo renders with zero network calls.
+      SEMANTIC COLOR NOTE: amber carries every verdict and risk state; cyan (orphan)
+      and green (ok) exist only as semantic states, red only for breakage-high and
+      errors — never decoration, never headline figures.
+      FINISH: unreviewed and undocumented is unfinished.
     -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
