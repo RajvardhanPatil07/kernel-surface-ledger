@@ -10,6 +10,7 @@ venv/
 raw.json
 report.json
 !fixtures/demo.json
+!data/reports/report.json
 
 node_modules/
 web/dist/
