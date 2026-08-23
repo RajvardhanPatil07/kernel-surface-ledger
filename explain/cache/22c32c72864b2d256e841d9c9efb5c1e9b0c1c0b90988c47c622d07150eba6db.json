@@ -1,0 +1,1 @@
+"{\n  \"breakage_risk\": \"low\",\n  \"breakage_note\": \"A workload using io_uring, such as fio, could fail to start io_uring contexts.\",\n  \"detection\": \"ausearch -m SECCOMP -i | grep io_uring_setup\",\n  \"revert\": \"sed -i '/io_uring_setup/d' /etc/seccomp.d/default.profile && systemctl restart systemd-seccomp\",\n  \"requires_reboot\": false\n}"

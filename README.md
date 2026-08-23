@@ -72,6 +72,27 @@ python ksl.py check report.json
 
 The static dashboard (`web/`) loads the latest runner-generated report, falls back to a bundled demo scan, and accepts any `report.json` via drag-and-drop.
 
+## AI layer configuration
+
+Any OpenAI-compatible chat endpoint works. Configuration comes from
+environment variables or a gitignored `.env` (see `.env.example`):
+
+```bash
+cp .env.example .env   # then fill in your key
+```
+
+| Variable | Example |
+| --- | --- |
+| `KSL_API_BASE` | `https://openrouter.ai/api/v1` |
+| `KSL_API_KEY` | your key (never committed) |
+| `KSL_MODEL` | `nvidia/nemotron-3-super-120b-a12b:free` |
+
+Every LLM response is cached to `explain/cache/<sha256(prompt)>.json`, and the
+cache is committed. A demo run therefore needs **no network and no API key**: it
+replays the exact narration in `docs/demo/report-explained.json`. On any error,
+timeout, or missing key the pipeline silently keeps its deterministic template
+content - numeric output is byte-identical either way.
+
 ## Tests
 
 ```bash

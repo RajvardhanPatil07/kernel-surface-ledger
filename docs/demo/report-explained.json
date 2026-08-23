@@ -1,0 +1,670 @@
+{
+  "ledger": [
+    {
+      "explanation": "Dockerd requires the unprivileged user namespace element (ns.userns_unpriv) to create isolated user namespaces for containers, mapping container UID/GID ranges to the host and enabling rootless or multi\u2011tenant containers without granting them real host privileges. This isolation prevents uid collisions and confines a compromised container to its own namespace.  \n\nFrom this surface an attacker gains a user\u2011namespace escape primitive (netfilter\u2011via\u2011userns or userns\u2011lpe) for host privilege escalation, an io_uring refcount use\u2011after\u2011free primitive allowing arbitrary kernel memory read/write, an io_uring use\u2011after\u2011free primitive with similar effect, a keyring use\u2011after\u2011free primitive that leaks or overwrites credential objects, and a keyctl refcount\u2011overflow primitive that corrupts reference counts leading to memory\u2011corruption\u2011based code execution.  \n\nDisable unprivileged user namespaces for dockerd, e.g., start it with --userns-remap=disabled or set kernel.user.max_user_namespaces=0, which removes ns.userns_unpriv usage. The tradeoff is that containers run in the host\u2019s UID/GID namespace, losing uid/gid isolation and increasing the impact of any container breakout on the host.",
+      "marginal_contribution": 9.5,
+      "reachable_cves": 9,
+      "shared_elements": [
+        "sc.io_uring_setup",
+        "sc.keyctl"
+      ],
+      "sole_owner_elements": [
+        "ns.userns_unpriv"
+      ],
+      "surface_debt": 17.25,
+      "workload_id": "w.dockerd"
+    },
+    {
+      "explanation": "libvirtd runs as root and opens /dev/kvm to issue KVM ioctls that create virtual machines, allocate vCPUs, set up memory regions, and control device assignment. Without this devnode the daemon cannot access hardware\u2011assisted virtualization, so the sole\u2011owner element dev.kvm is required for its core workflow.\n\nAn attacker who can influence libvirtd\u2019s KVM ioctl input can trigger an out\u2011of\u2011bounds write in the kvm ioctl handler, achieving arbitrary kernel memory corruption. This primitive yields privilege escalation from the libvirtd process (uid\u202f0) to full kernel code execution, as reflected in the kvm\u2011ioctl CVE cluster.\n\nThe surface can be removed by disabling KVM acceleration in libvirtd/QEMU and letting QEMU use its TCG software emulator instead of /dev/kvm. This preserves the ability to start and manage VMs but incurs substantial CPU overhead, slowing guest execution and increasing host load.",
+      "marginal_contribution": 7.0,
+      "reachable_cves": 1,
+      "shared_elements": [],
+      "sole_owner_elements": [
+        "dev.kvm"
+      ],
+      "surface_debt": 7.0,
+      "workload_id": "w.libvirtd"
+    },
+    {
+      "explanation": "The workload has no sole\u2011owner elements, so there is no function that uniquely requires any such element. The surface remains open because nginx shares the io_uring setup syscall (sc.io_uring_setup) to perform asynchronous I/O for high\u2011speed network traffic.  \n\nAn attacker who can reach this shared element gains two exploitation primitives: the ability to manipulate io_uring reference counts (leading to overflow or underflow) and to trigger a use\u2011after\u2011free condition in the io_uring subsystem. These primitives allow arbitrary kernel memory read/write and privilege escalation.  \n\nThe surface can be removed by disabling nginx\u2019s use of io_uring, for example by setting `use io_uring off;` in the nginx configuration or by building nginx without the io_uring module and relying on its default epoll event loop. This preserves the ability to serve HTTP requests while eliminating the sc.io_uring_setup exposure, though it reduces the asynchronous I/O throughput that io_uring provides.",
+      "marginal_contribution": 0,
+      "reachable_cves": 3,
+      "shared_elements": [
+        "sc.io_uring_setup"
+      ],
+      "sole_owner_elements": [],
+      "surface_debt": 4.5,
+      "workload_id": "w.nginx"
+    },
+    {
+      "explanation": "udisksd runs as root to automatically detect and mount block devices. It needs the usb_storage kernel module to enumerate USB mass\u2011storage devices, expose them as /dev/sd* nodes, and trigger its automount policies. Without this module it cannot see USB sticks, so the workload keeps the surface open to provide transparent USB storage handling.\n\nThe usb_storage module (weight\u202f4.5) links to one reachable CVE in the usb\u2011parsing cluster. Exploiting this flaw triggers a heap\u2011based buffer overflow when parsing malicious USB device descriptors, giving an attacker arbitrary kernel code execution and privilege escalation from user space to root.\n\nAdd a udev rule that sets ENV{UDISKS_IGNORE}=1 for all USB storage devices; udisksd will skip probing them, allowing the usb_storage module to be unloaded while udisks2 still handles optical discs or other block devices. If automatic USB mounting is required, no substitute exists and the trade\u2011off is loss of that automation, requiring manual mount or a less privileged userspace mounter.",
+      "marginal_contribution": 4.5,
+      "reachable_cves": 1,
+      "shared_elements": [],
+      "sole_owner_elements": [
+        "mod.usb_storage"
+      ],
+      "surface_debt": 4.5,
+      "workload_id": "w.udisksd"
+    },
+    {
+      "explanation": "The workload w.sshd has no sole\u2011owner elements, so the only reason the attack surface remains open is its use of the shared element sc.keyctl. sshd invokes the keyctl syscall to manage kernel keyrings for storing authentication tokens and session keys.  \n\nThrough sc.keyctl an attacker can trigger a use\u2011after\u2011free on keyring objects and a reference\u2011count overflow, giving the primitives of arbitrary kernel memory read/write and privilege escalation via corrupted keyring references.  \n\nIf the operator does not need keyring\u2011based authentication, they can disable the feature in sshd (e.g., turn off GSSAPIKeyExchange or apply a seccomp filter that blocks keyctl) which removes the surface; otherwise the surface must be retained because sshd\u2019s workflow depends on keyctl for its keyring operations.",
+      "marginal_contribution": 0,
+      "reachable_cves": 2,
+      "shared_elements": [
+        "sc.keyctl"
+      ],
+      "sole_owner_elements": [],
+      "surface_debt": 3.25,
+      "workload_id": "w.sshd"
+    }
+  ],
+  "meta": {
+    "arch": "x86_64",
+    "collected_at": "2026-08-22T15:04:11Z",
+    "distro": "Ubuntu 24.04.1 LTS",
+    "kernel_release": "6.8.0-45-generic",
+    "ksl_version": "0.1.0",
+    "ran_as_root": true,
+    "skipped": [],
+    "trace_backend": "strace",
+    "trace_seconds": 60
+  },
+  "orphaned": {
+    "cves_neutralizable": 7,
+    "elements": [
+      "mod.bluetooth",
+      "mod.dccp",
+      "mod.legacy_fs",
+      "mod.n_hdlc",
+      "mod.rds",
+      "mod.tipc",
+      "sc.perf_event_open",
+      "sc.userfaultfd"
+    ],
+    "total_weight": 52.0
+  },
+  "plan": [
+    {
+      "action": "blacklist_module",
+      "artifact": {
+        "content": "# generated by kernel-surface-ledger - revert: kernel-surface-ledger generate blacklist_module\nblacklist bluetooth\ninstall bluetooth /bin/false\nblacklist cramfs\ninstall cramfs /bin/false\nblacklist dccp\ninstall dccp /bin/false\nblacklist freevxfs\ninstall freevxfs /bin/false\nblacklist hfsplus\ninstall hfsplus /bin/false\nblacklist jffs2\ninstall jffs2 /bin/false\nblacklist n_hdlc\ninstall n_hdlc /bin/false\nblacklist rds\ninstall rds /bin/false\nblacklist tipc\ninstall tipc /bin/false\nblacklist udf\ninstall udf /bin/false\n",
+        "path": "/etc/modprobe.d/ksl-blacklist.conf"
+      },
+      "breakage_note": "If a Bluetooth service (bluetoothd) is started, it would fail to load the bluetooth module",
+      "breakage_risk": "none",
+      "cves_killed": 5,
+      "detection": "modprobe bluetooth 2>&1 | grep -i blacklisted",
+      "requires_reboot": false,
+      "revert": "sudo sed -i '/^blacklist bluetooth$/d; /^blacklist cramfs$/d; /^blacklist dccp$/d; /^blacklist freevxfs$/d; /^blacklist hfsplus$/d; /^blacklist jffs2$/d; /^blacklist n_hdlc$/d; /^blacklist rds$/d; /^blacklist tipc$/d; /^blacklist udf$/d' /etc/modprobe.d/blacklist.conf",
+      "step": 1,
+      "targets": [
+        "bluetooth",
+        "cramfs",
+        "dccp",
+        "freevxfs",
+        "hfsplus",
+        "jffs2",
+        "n_hdlc",
+        "rds",
+        "tipc",
+        "udf"
+      ],
+      "weight_removed": 36.5
+    },
+    {
+      "action": "seccomp_filter",
+      "artifact": {
+        "content": "# generated by kernel-surface-ledger - revert: kernel-surface-ledger revert\n{\n  \"defaultAction\": \"SCMP_ACT_ERRNO\",\n  \"syscalls\": [\n    {\"name\": \"execve\", \"action\": \"SCMP_ACT_ALLOW\"},\n    {\"name\": \"exit\", \"action\": \"SCMP_ACT_ALLOW\"},\n    {\"name\": \"exit_group\", \"action\": \"SCMP_ACT_ALLOW\"},\n    {\"name\": \"rt_sigreturn\", \"action\": \"SCMP_ACT_ALLOW\"},\n    {\"name\": \"rt_sigaction\", \"action\": \"SCMP_ACT_ALLOW\"},\n    {\"name\": \"futex\", \"action\": \"SCMP_ACT_ALLOW\"},\n    {\"name\": \"restart_syscall\", \"action\": \"SCMP_ACT_ALLOW\"},\n    {\"name\": \"mmap\", \"action\": \"SCMP_ACT_ALLOW\"},\n    {\"name\": \"munmap\", \"action\": \"SCMP_ACT_ALLOW\"},\n    {\"name\": \"mprotect\", \"action\": \"SCMP_ACT_ALLOW\"},\n    {\"name\": \"brk\", \"action\": \"SCMP_ACT_ALLOW\"},\n    {\"name\": \"read\", \"action\": \"SCMP_ACT_ALLOW\"},\n    {\"name\": \"write\", \"action\": \"SCMP_ACT_ALLOW\"},\n    {\"name\": \"close\", \"action\": \"SCMP_ACT_ALLOW\"}\n  ]\n}\n",
+        "path": "/etc/ksl/seccomp_filter.conf"
+      },
+      "breakage_note": "perf tool (e.g., perf record) could fail due to blocked perf_event_open",
+      "breakage_risk": "none",
+      "cves_killed": 2,
+      "detection": "dmesg | grep -i seccomp",
+      "requires_reboot": false,
+      "revert": "sed -i '/seccomp_filter=perf_event_open/d' /etc/default/grub && update-grub",
+      "step": 2,
+      "targets": [
+        "perf_event_open"
+      ],
+      "weight_removed": 0.0
+    },
+    {
+      "action": "sysctl_set",
+      "artifact": {
+        "content": "# generated by kernel-surface-ledger - revert: sysctl -w kernel.dmesg_restrict=0 kernel.kptr_restrict=0 kernel.modules_disabled=0 kernel.unprivileged_userns_clone=1\n# CVE-2016-5195: kernel.dmesg_restrict=1\n# CVE-2016-5195: kernel.kptr_restrict=2\n# CVE-2016-5195: kernel.modules_disabled=1\n# CVE-2016-5195: kernel.unprivileged_userns_clone=0\n",
+        "path": "/etc/sysctl.d/99-ksl-hardening.conf"
+      },
+      "breakage_note": "A container runtime such as Docker that relies on unprivileged user namespaces may fail to start containers.",
+      "breakage_risk": "low",
+      "cves_killed": 5,
+      "detection": "journalctl -u docker | grep 'permission denied'",
+      "requires_reboot": false,
+      "revert": "sysctl -w kernel.dmesg_restrict=0 kernel.kptr_restrict=0 kernel.modules_disabled=0 kernel.unprivileged_userns_clone=1",
+      "step": 3,
+      "targets": [
+        "kernel.dmesg_restrict=1",
+        "kernel.kptr_restrict=2",
+        "kernel.modules_disabled=1",
+        "kernel.unprivileged_userns_clone=0"
+      ],
+      "weight_removed": 26.0
+    },
+    {
+      "action": "seccomp_filter",
+      "artifact": {
+        "content": "# generated by kernel-surface-ledger - revert: kernel-surface-ledger revert\n{\n  \"defaultAction\": \"SCMP_ACT_ERRNO\",\n  \"syscalls\": [\n    {\n      \"names\": [\n        \"execve\",\n        \"exit\",\n        \"exit_group\",\n        \"rt_sigreturn\",\n        \"rt_sigaction\",\n        \"futex\",\n        \"restart_syscall\",\n        \"mmap\",\n        \"munmap\",\n        \"mprotect\",\n        \"brk\",\n        \"read\",\n        \"write\",\n        \"close\"\n      ],\n      \"action\": \"SCMP_ACT_ALLOW\"\n    }\n  ]\n}\n",
+        "path": "/etc/ksl/seccomp_filter.conf"
+      },
+      "breakage_note": "A checkpoint/restore tool such as CRIU that uses userfaultfd could be blocked by the seccomp filter.",
+      "breakage_risk": "none",
+      "cves_killed": 1,
+      "detection": "ausearch -m seccomp -i | grep userfaultfd",
+      "requires_reboot": false,
+      "revert": "sudo rm -f /etc/seccomp.d/userfaultfd && sudo systemctl restart systemd-logind",
+      "step": 4,
+      "targets": [
+        "userfaultfd"
+      ],
+      "weight_removed": 0.0
+    },
+    {
+      "action": "seccomp_filter",
+      "artifact": {
+        "content": "# generated by kernel-surface-ledger - revert: kernel-surface-ledger revert\n{\n  \"defaultAction\": \"SCMP_ACT_ERRNO\",\n  \"syscalls\": [\n    {\n      \"names\": [\n        \"execve\",\n        \"exit\",\n        \"exit_group\",\n        \"rt_sigreturn\",\n        \"rt_sigaction\",\n        \"futex\",\n        \"restart_syscall\",\n        \"mmap\",\n        \"munmap\",\n        \"mprotect\",\n        \"brk\",\n        \"read\",\n        \"write\",\n        \"close\"\n      ],\n      \"action\": \"SCMP_ACT_ALLOW\"\n    }\n  ]\n}\n",
+        "path": "/etc/ksl/seccomp_filter.conf"
+      },
+      "breakage_note": "A workload using io_uring, such as fio, could fail to start io_uring contexts.",
+      "breakage_risk": "low",
+      "cves_killed": 3,
+      "detection": "ausearch -m SECCOMP -i | grep io_uring_setup",
+      "requires_reboot": false,
+      "revert": "sed -i '/io_uring_setup/d' /etc/seccomp.d/default.profile && systemctl restart systemd-seccomp",
+      "step": 5,
+      "targets": [
+        "io_uring_setup"
+      ],
+      "weight_removed": 0.0
+    }
+  ],
+  "score": {
+    "orphan_ratio": 0.491,
+    "projected_after_plan": {
+      "reachable_cve_count": 9,
+      "reachable_surface_weight": 43.5
+    },
+    "reachable_cve_count": 19,
+    "reachable_surface_weight": 106.0,
+    "total_surface_weight": 149.0
+  },
+  "surface_elements": [
+    {
+      "cve_clusters": [
+        "cap-sys-admin-abuse"
+      ],
+      "gate_reason": "no non-root workload holds CAP_SYS_ADMIN",
+      "id": "cap.sys_admin_unpriv",
+      "kind": "capability",
+      "mitigations": [
+        "systemd NoNewPrivileges=yes and AmbientCapabilities= drop"
+      ],
+      "name": "CAP_SYS_ADMIN held by non-root workload",
+      "present": false,
+      "reachable_unpriv": false,
+      "subsystem": "capabilities",
+      "used": false,
+      "weight": 9.0
+    },
+    {
+      "cve_clusters": [
+        "infoleak"
+      ],
+      "gate_reason": "kernel.dmesg_restrict=0",
+      "id": "cfg.dmesg_open",
+      "kind": "sysctl",
+      "mitigations": [
+        "sysctl kernel.dmesg_restrict=1"
+      ],
+      "name": "kernel.dmesg_restrict = 0",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "infoleak",
+      "used": true,
+      "weight": 4.0
+    },
+    {
+      "cve_clusters": [
+        "compat-ioctls"
+      ],
+      "gate_reason": "compiled in",
+      "id": "cfg.kconfig_compat",
+      "kind": "kconfig",
+      "mitigations": [],
+      "name": "CONFIG_COMPAT (32-bit emulation)",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "compat",
+      "used": false,
+      "weight": 5.5
+    },
+    {
+      "cve_clusters": [
+        "autoload-amplifier"
+      ],
+      "gate_reason": "kernel.modules_disabled=0",
+      "id": "cfg.module_autoload",
+      "kind": "sysctl",
+      "mitigations": [
+        "sysctl kernel.modules_disabled=1 after boot",
+        "modprobe install <mod> /bin/false"
+      ],
+      "name": "unrestricted module autoload",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "modules",
+      "used": true,
+      "weight": 7.5
+    },
+    {
+      "cve_clusters": [
+        "infoleak"
+      ],
+      "gate_reason": "kernel.kptr_restrict=1",
+      "id": "cfg.no_kptr_restrict",
+      "kind": "sysctl",
+      "mitigations": [
+        "sysctl kernel.kptr_restrict=2"
+      ],
+      "name": "kernel.kptr_restrict < 2",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "infoleak",
+      "used": true,
+      "weight": 5.0
+    },
+    {
+      "cve_clusters": [
+        "kernel-integrity"
+      ],
+      "gate_reason": "root-only impact",
+      "id": "cfg.no_lockdown",
+      "kind": "lsm",
+      "mitigations": [
+        "boot with lockdown=confidentiality"
+      ],
+      "name": "lockdown LSM inactive",
+      "present": true,
+      "reachable_unpriv": false,
+      "subsystem": "lsm",
+      "used": false,
+      "weight": 6.0
+    },
+    {
+      "cve_clusters": [
+        "kvm-ioctl"
+      ],
+      "gate_reason": "mode 0666 grants non-root",
+      "id": "dev.kvm",
+      "kind": "devnode",
+      "mitigations": [
+        "restrict group ownership to kvm"
+      ],
+      "name": "/dev/kvm",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "kvm",
+      "used": true,
+      "weight": 7.0
+    },
+    {
+      "cve_clusters": [
+        "physical-memory-access"
+      ],
+      "gate_reason": "blocked: mode 0640 denies non-root",
+      "id": "dev.mem",
+      "kind": "devnode",
+      "mitigations": [
+        "boot lockdown=confidentiality",
+        "CONFIG_IO_STRICT_DEVMEM"
+      ],
+      "name": "/dev/mem",
+      "present": true,
+      "reachable_unpriv": false,
+      "subsystem": "mm",
+      "used": false,
+      "weight": 9.0
+    },
+    {
+      "cve_clusters": [
+        "bluetooth-parsing"
+      ],
+      "gate_reason": "loaded: bluetooth",
+      "id": "mod.bluetooth",
+      "kind": "module",
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ],
+      "name": "bluetooth",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "bluetooth",
+      "used": false,
+      "weight": 6.0
+    },
+    {
+      "cve_clusters": [
+        "dccp-uaf",
+        "net-legacy-proto"
+      ],
+      "gate_reason": "not loaded but autoloadable via modules.dep (dccp)",
+      "id": "mod.dccp",
+      "kind": "module",
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ],
+      "name": "dccp",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "net",
+      "used": false,
+      "weight": 7.0
+    },
+    {
+      "cve_clusters": [
+        "dma-physical-access"
+      ],
+      "gate_reason": "not present on host",
+      "id": "mod.firewire_core",
+      "kind": "module",
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ],
+      "name": "firewire-core",
+      "present": false,
+      "reachable_unpriv": false,
+      "subsystem": "firewire",
+      "used": false,
+      "weight": 6.0
+    },
+    {
+      "cve_clusters": [
+        "fs-image-parsing"
+      ],
+      "gate_reason": "not loaded but autoloadable via modules.dep (cramfs, freevxfs, hfsplus, jffs2, udf)",
+      "id": "mod.legacy_fs",
+      "kind": "module",
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ],
+      "name": "cramfs / freevxfs / jffs2 / hfsplus / udf",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "fs",
+      "used": false,
+      "weight": 5.0
+    },
+    {
+      "cve_clusters": [
+        "tty-ldisc-lpe"
+      ],
+      "gate_reason": "not loaded but autoloadable via modules.dep (n_hdlc)",
+      "id": "mod.n_hdlc",
+      "kind": "module",
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ],
+      "name": "n_hdlc",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "tty",
+      "used": false,
+      "weight": 5.5
+    },
+    {
+      "cve_clusters": [
+        "net-legacy-proto"
+      ],
+      "gate_reason": "not loaded but autoloadable via modules.dep (rds)",
+      "id": "mod.rds",
+      "kind": "module",
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ],
+      "name": "rds",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "net",
+      "used": false,
+      "weight": 6.5
+    },
+    {
+      "cve_clusters": [
+        "net-legacy-proto",
+        "remote-heap-overflow"
+      ],
+      "gate_reason": "not loaded but autoloadable via modules.dep (tipc)",
+      "id": "mod.tipc",
+      "kind": "module",
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ],
+      "name": "tipc",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "net",
+      "used": false,
+      "weight": 6.5
+    },
+    {
+      "cve_clusters": [
+        "usb-parsing"
+      ],
+      "gate_reason": "not present on host",
+      "id": "mod.usb_storage",
+      "kind": "module",
+      "mitigations": [
+        "modprobe blacklist",
+        "USBGuard"
+      ],
+      "name": "usb-storage",
+      "present": false,
+      "reachable_unpriv": false,
+      "subsystem": "usb",
+      "used": true,
+      "weight": 4.5
+    },
+    {
+      "cve_clusters": [
+        "netfilter-via-userns",
+        "userns-lpe"
+      ],
+      "gate_reason": "kernel.unprivileged_userns_clone=1",
+      "id": "ns.userns_unpriv",
+      "kind": "namespace",
+      "mitigations": [
+        "sysctl kernel.unprivileged_userns_clone=0",
+        "systemd RestrictNamespaces="
+      ],
+      "name": "unprivileged user namespaces",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "namespaces",
+      "used": true,
+      "weight": 9.5
+    },
+    {
+      "cve_clusters": [
+        "bpf-verifier"
+      ],
+      "gate_reason": "blocked: kernel.unprivileged_bpf_disabled=1",
+      "id": "sc.bpf_unpriv",
+      "kind": "syscall",
+      "mitigations": [
+        "sysctl kernel.unprivileged_bpf_disabled=1"
+      ],
+      "name": "bpf (unprivileged)",
+      "present": true,
+      "reachable_unpriv": false,
+      "subsystem": "bpf",
+      "used": false,
+      "weight": 8.5
+    },
+    {
+      "cve_clusters": [
+        "io_uring-refcount",
+        "io_uring-uaf"
+      ],
+      "gate_reason": "kernel.io_uring_disabled=0",
+      "id": "sc.io_uring_setup",
+      "kind": "syscall",
+      "mitigations": [
+        "sysctl kernel.io_uring_disabled=2",
+        "seccomp deny io_uring_setup,io_uring_enter,io_uring_register"
+      ],
+      "name": "io_uring_setup",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "io_uring",
+      "used": true,
+      "weight": 9.0
+    },
+    {
+      "cve_clusters": [
+        "keyring-uaf",
+        "refcount-overflow"
+      ],
+      "gate_reason": "",
+      "id": "sc.keyctl",
+      "kind": "syscall",
+      "mitigations": [
+        "seccomp deny keyctl,add_key,request_key"
+      ],
+      "name": "keyctl",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "keys",
+      "used": true,
+      "weight": 6.5
+    },
+    {
+      "cve_clusters": [
+        "infoleak",
+        "perf-lpe"
+      ],
+      "gate_reason": "kernel.perf_event_paranoid=2",
+      "id": "sc.perf_event_open",
+      "kind": "syscall",
+      "mitigations": [
+        "sysctl kernel.perf_event_paranoid=3",
+        "seccomp deny perf_event_open"
+      ],
+      "name": "perf_event_open",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "perf",
+      "used": false,
+      "weight": 7.5
+    },
+    {
+      "cve_clusters": [
+        "heap-grooming-primitive"
+      ],
+      "gate_reason": "vm.unprivileged_userfaultfd=1",
+      "id": "sc.userfaultfd",
+      "kind": "syscall",
+      "mitigations": [
+        "sysctl vm.unprivileged_userfaultfd=0",
+        "seccomp deny userfaultfd"
+      ],
+      "name": "userfaultfd",
+      "present": true,
+      "reachable_unpriv": true,
+      "subsystem": "mm",
+      "used": false,
+      "weight": 8.0
+    }
+  ],
+  "workloads": [
+    {
+      "caps_effective": [
+        "CAP_21"
+      ],
+      "comm": "dockerd",
+      "id": "w.dockerd",
+      "pids": [
+        1284
+      ],
+      "seccomp_mode": 0,
+      "touches": [
+        "ns.userns_unpriv",
+        "sc.io_uring_setup",
+        "sc.keyctl"
+      ],
+      "uid": 0,
+      "unit": "docker.service"
+    },
+    {
+      "caps_effective": [
+        "CAP_21"
+      ],
+      "comm": "libvirtd",
+      "id": "w.libvirtd",
+      "pids": [
+        1622
+      ],
+      "seccomp_mode": 0,
+      "touches": [
+        "dev.kvm"
+      ],
+      "uid": 0,
+      "unit": "libvirtd.service"
+    },
+    {
+      "caps_effective": [],
+      "comm": "nginx",
+      "id": "w.nginx",
+      "pids": [
+        2011
+      ],
+      "seccomp_mode": 0,
+      "touches": [
+        "sc.io_uring_setup"
+      ],
+      "uid": 33,
+      "unit": "nginx.service"
+    },
+    {
+      "caps_effective": [
+        "CAP_19"
+      ],
+      "comm": "sshd",
+      "id": "w.sshd",
+      "pids": [
+        980
+      ],
+      "seccomp_mode": 2,
+      "touches": [
+        "sc.keyctl"
+      ],
+      "uid": 0,
+      "unit": "ssh.service"
+    },
+    {
+      "caps_effective": [
+        "CAP_21"
+      ],
+      "comm": "udisksd",
+      "id": "w.udisksd",
+      "pids": [
+        1105
+      ],
+      "seccomp_mode": 0,
+      "touches": [
+        "mod.usb_storage"
+      ],
+      "uid": 0,
+      "unit": "udisks2.service"
+    }
+  ]
+}

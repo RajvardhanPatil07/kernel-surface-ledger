@@ -1,0 +1,1 @@
+"{\n  \"breakage_risk\": \"low\",\n  \"breakage_note\": \"perf tool (e.g., perf record) could fail due to blocked perf_event_open\",\n  \"detection\": \"dmesg | grep -i seccomp\",\n  \"revert\": \"sed -i '/seccomp_filter=perf_event_open/d' /etc/default/grub && update-grub\",\n  \"requires_reboot\": true\n}"

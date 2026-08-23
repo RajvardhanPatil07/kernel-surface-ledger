@@ -1,0 +1,1 @@
+"{\n  \"breakage_risk\": \"low\",\n  \"breakage_note\": \"A checkpoint/restore tool such as CRIU that uses userfaultfd could be blocked by the seccomp filter.\",\n  \"detection\": \"ausearch -m seccomp -i | grep userfaultfd\",\n  \"revert\": \"sudo rm -f /etc/seccomp.d/userfaultfd && sudo systemctl restart systemd-logind\",\n  \"requires_reboot\": false\n}"
