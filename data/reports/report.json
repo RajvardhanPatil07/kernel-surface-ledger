@@ -1,0 +1,1294 @@
+{
+  "meta": {
+    "kernel_release": "6.17.0-1022-azure",
+    "arch": "x86_64",
+    "distro": "Ubuntu 24.04.4 LTS",
+    "collected_at": "2026-08-23T08:14:50+00:00",
+    "trace_seconds": 5,
+    "trace_backend": "none",
+    "ran_as_root": false,
+    "skipped": [
+      {
+        "reason": "not present",
+        "source": "devnode:/dev/bpf"
+      },
+      {
+        "reason": "not present",
+        "source": "devnode:/dev/dri/card0"
+      },
+      {
+        "reason": "not present",
+        "source": "devnode:/dev/kmem"
+      },
+      {
+        "reason": "not present",
+        "source": "kconfig:/proc/config.gz"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1/exe'",
+        "source": "process:1"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/10/exe'",
+        "source": "process:10"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1007/exe'",
+        "source": "process:1007"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1019/exe'",
+        "source": "process:1019"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1021/exe'",
+        "source": "process:1021"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1037/exe'",
+        "source": "process:1037"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/104/exe'",
+        "source": "process:104"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/105/exe'",
+        "source": "process:105"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1057/exe'",
+        "source": "process:1057"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/106/exe'",
+        "source": "process:106"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1066/exe'",
+        "source": "process:1066"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1069/exe'",
+        "source": "process:1069"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/107/exe'",
+        "source": "process:107"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/108/exe'",
+        "source": "process:108"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1084/exe'",
+        "source": "process:1084"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/11/exe'",
+        "source": "process:11"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1137/exe'",
+        "source": "process:1137"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1150/exe'",
+        "source": "process:1150"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1160/exe'",
+        "source": "process:1160"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1173/exe'",
+        "source": "process:1173"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/12/exe'",
+        "source": "process:12"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1247/exe'",
+        "source": "process:1247"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1248/exe'",
+        "source": "process:1248"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/13/exe'",
+        "source": "process:13"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1302/exe'",
+        "source": "process:1302"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/14/exe'",
+        "source": "process:14"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/15/exe'",
+        "source": "process:15"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/156/exe'",
+        "source": "process:156"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1599/exe'",
+        "source": "process:1599"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/16/exe'",
+        "source": "process:16"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/17/exe'",
+        "source": "process:17"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/170/exe'",
+        "source": "process:170"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1764/exe'",
+        "source": "process:1764"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/178/exe'",
+        "source": "process:178"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/179/exe'",
+        "source": "process:179"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/18/exe'",
+        "source": "process:18"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/180/exe'",
+        "source": "process:180"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/19/exe'",
+        "source": "process:19"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/198/exe'",
+        "source": "process:198"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/199/exe'",
+        "source": "process:199"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2/exe'",
+        "source": "process:2"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/20/exe'",
+        "source": "process:20"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2077/exe'",
+        "source": "process:2077"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2096/exe'",
+        "source": "process:2096"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2098/exe'",
+        "source": "process:2098"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/21/exe'",
+        "source": "process:21"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/214/exe'",
+        "source": "process:214"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2149/exe'",
+        "source": "process:2149"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2151/exe'",
+        "source": "process:2151"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2152/exe'",
+        "source": "process:2152"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2153/exe'",
+        "source": "process:2153"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2156/exe'",
+        "source": "process:2156"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2157/exe'",
+        "source": "process:2157"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2158/exe'",
+        "source": "process:2158"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2159/exe'",
+        "source": "process:2159"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2160/exe'",
+        "source": "process:2160"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2172/exe'",
+        "source": "process:2172"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2173/exe'",
+        "source": "process:2173"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2174/exe'",
+        "source": "process:2174"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2175/exe'",
+        "source": "process:2175"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2176/exe'",
+        "source": "process:2176"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/218/exe'",
+        "source": "process:218"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/219/exe'",
+        "source": "process:219"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/22/exe'",
+        "source": "process:22"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/223/exe'",
+        "source": "process:223"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/228/exe'",
+        "source": "process:228"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/23/exe'",
+        "source": "process:23"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/24/exe'",
+        "source": "process:24"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/240/exe'",
+        "source": "process:240"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/25/exe'",
+        "source": "process:25"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/26/exe'",
+        "source": "process:26"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/27/exe'",
+        "source": "process:27"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/28/exe'",
+        "source": "process:28"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/29/exe'",
+        "source": "process:29"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/3/exe'",
+        "source": "process:3"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/30/exe'",
+        "source": "process:30"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/31/exe'",
+        "source": "process:31"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/32/exe'",
+        "source": "process:32"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/33/exe'",
+        "source": "process:33"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/34/exe'",
+        "source": "process:34"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/35/exe'",
+        "source": "process:35"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/36/exe'",
+        "source": "process:36"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/37/exe'",
+        "source": "process:37"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/38/exe'",
+        "source": "process:38"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/389/exe'",
+        "source": "process:389"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/39/exe'",
+        "source": "process:39"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/4/exe'",
+        "source": "process:4"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/40/exe'",
+        "source": "process:40"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/41/exe'",
+        "source": "process:41"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/412/exe'",
+        "source": "process:412"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/413/exe'",
+        "source": "process:413"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/42/exe'",
+        "source": "process:42"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/43/exe'",
+        "source": "process:43"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/44/exe'",
+        "source": "process:44"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/45/exe'",
+        "source": "process:45"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/46/exe'",
+        "source": "process:46"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/47/exe'",
+        "source": "process:47"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/48/exe'",
+        "source": "process:48"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/49/exe'",
+        "source": "process:49"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/5/exe'",
+        "source": "process:5"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/50/exe'",
+        "source": "process:50"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/51/exe'",
+        "source": "process:51"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/52/exe'",
+        "source": "process:52"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/53/exe'",
+        "source": "process:53"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/530/exe'",
+        "source": "process:530"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/54/exe'",
+        "source": "process:54"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/55/exe'",
+        "source": "process:55"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/56/exe'",
+        "source": "process:56"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/57/exe'",
+        "source": "process:57"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/58/exe'",
+        "source": "process:58"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/580/exe'",
+        "source": "process:580"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/59/exe'",
+        "source": "process:59"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/6/exe'",
+        "source": "process:6"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/60/exe'",
+        "source": "process:60"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/61/exe'",
+        "source": "process:61"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/62/exe'",
+        "source": "process:62"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/63/exe'",
+        "source": "process:63"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/64/exe'",
+        "source": "process:64"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/65/exe'",
+        "source": "process:65"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/66/exe'",
+        "source": "process:66"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/67/exe'",
+        "source": "process:67"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/68/exe'",
+        "source": "process:68"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/69/exe'",
+        "source": "process:69"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/7/exe'",
+        "source": "process:7"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/70/exe'",
+        "source": "process:70"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/71/exe'",
+        "source": "process:71"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/719/exe'",
+        "source": "process:719"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/72/exe'",
+        "source": "process:72"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/73/exe'",
+        "source": "process:73"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/74/exe'",
+        "source": "process:74"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/75/exe'",
+        "source": "process:75"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/76/exe'",
+        "source": "process:76"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/77/exe'",
+        "source": "process:77"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/78/exe'",
+        "source": "process:78"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/79/exe'",
+        "source": "process:79"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/8/exe'",
+        "source": "process:8"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/80/exe'",
+        "source": "process:80"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/81/exe'",
+        "source": "process:81"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/82/exe'",
+        "source": "process:82"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/83/exe'",
+        "source": "process:83"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/84/exe'",
+        "source": "process:84"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/85/exe'",
+        "source": "process:85"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/86/exe'",
+        "source": "process:86"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/87/exe'",
+        "source": "process:87"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/88/exe'",
+        "source": "process:88"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/89/exe'",
+        "source": "process:89"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/9/exe'",
+        "source": "process:9"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/90/exe'",
+        "source": "process:90"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/91/exe'",
+        "source": "process:91"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/93/exe'",
+        "source": "process:93"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/955/exe'",
+        "source": "process:955"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/959/exe'",
+        "source": "process:959"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/962/exe'",
+        "source": "process:962"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/964/exe'",
+        "source": "process:964"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/975/exe'",
+        "source": "process:975"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/977/exe'",
+        "source": "process:977"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/978/exe'",
+        "source": "process:978"
+      },
+      {
+        "reason": "RuntimeError: perf exited 255",
+        "source": "trace:perf"
+      }
+    ],
+    "ksl_version": "0.1.0"
+  },
+  "surface_elements": [
+    {
+      "id": "cap.sys_admin_unpriv",
+      "kind": "capability",
+      "name": "CAP_SYS_ADMIN held by non-root workload",
+      "subsystem": "capabilities",
+      "weight": 9.0,
+      "present": false,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "no non-root workload holds CAP_SYS_ADMIN",
+      "cve_clusters": [
+        "cap-sys-admin-abuse"
+      ],
+      "mitigations": [
+        "systemd NoNewPrivileges=yes and AmbientCapabilities= drop"
+      ]
+    },
+    {
+      "id": "cfg.dmesg_open",
+      "kind": "sysctl",
+      "name": "kernel.dmesg_restrict = 0",
+      "subsystem": "infoleak",
+      "weight": 4.0,
+      "present": true,
+      "reachable_unpriv": false,
+      "used": true,
+      "gate_reason": "kernel.dmesg_restrict=1",
+      "cve_clusters": [
+        "infoleak"
+      ],
+      "mitigations": [
+        "sysctl kernel.dmesg_restrict=1"
+      ]
+    },
+    {
+      "id": "cfg.kconfig_compat",
+      "kind": "kconfig",
+      "name": "CONFIG_COMPAT (32-bit emulation)",
+      "subsystem": "compat",
+      "weight": 5.5,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "compiled in",
+      "cve_clusters": [
+        "compat-ioctls"
+      ],
+      "mitigations": []
+    },
+    {
+      "id": "cfg.module_autoload",
+      "kind": "sysctl",
+      "name": "unrestricted module autoload",
+      "subsystem": "modules",
+      "weight": 7.5,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": true,
+      "gate_reason": "kernel.modules_disabled=0",
+      "cve_clusters": [
+        "autoload-amplifier"
+      ],
+      "mitigations": [
+        "sysctl kernel.modules_disabled=1 after boot",
+        "modprobe install <mod> /bin/false"
+      ]
+    },
+    {
+      "id": "cfg.no_kptr_restrict",
+      "kind": "sysctl",
+      "name": "kernel.kptr_restrict < 2",
+      "subsystem": "infoleak",
+      "weight": 5.0,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": true,
+      "gate_reason": "kernel.kptr_restrict=1",
+      "cve_clusters": [
+        "infoleak"
+      ],
+      "mitigations": [
+        "sysctl kernel.kptr_restrict=2"
+      ]
+    },
+    {
+      "id": "cfg.no_lockdown",
+      "kind": "lsm",
+      "name": "lockdown LSM inactive",
+      "subsystem": "lsm",
+      "weight": 6.0,
+      "present": true,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "root-only impact",
+      "cve_clusters": [
+        "kernel-integrity"
+      ],
+      "mitigations": [
+        "boot with lockdown=confidentiality"
+      ]
+    },
+    {
+      "id": "dev.kvm",
+      "kind": "devnode",
+      "name": "/dev/kvm",
+      "subsystem": "kvm",
+      "weight": 7.0,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "mode 0660 grants non-root",
+      "cve_clusters": [
+        "kvm-ioctl"
+      ],
+      "mitigations": [
+        "restrict group ownership to kvm"
+      ]
+    },
+    {
+      "id": "dev.mem",
+      "kind": "devnode",
+      "name": "/dev/mem",
+      "subsystem": "mm",
+      "weight": 9.0,
+      "present": true,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "blocked: STRICT_DEVMEM=y despite mode 0640",
+      "cve_clusters": [
+        "physical-memory-access"
+      ],
+      "mitigations": [
+        "boot lockdown=confidentiality",
+        "CONFIG_IO_STRICT_DEVMEM"
+      ]
+    },
+    {
+      "id": "mod.bluetooth",
+      "kind": "module",
+      "name": "bluetooth",
+      "subsystem": "bluetooth",
+      "weight": 6.0,
+      "present": false,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "not present on host",
+      "cve_clusters": [
+        "bluetooth-parsing"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.dccp",
+      "kind": "module",
+      "name": "dccp",
+      "subsystem": "net",
+      "weight": 7.0,
+      "present": false,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "not present on host",
+      "cve_clusters": [
+        "dccp-uaf",
+        "net-legacy-proto"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.firewire_core",
+      "kind": "module",
+      "name": "firewire-core",
+      "subsystem": "firewire",
+      "weight": 6.0,
+      "present": false,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "not present on host",
+      "cve_clusters": [
+        "dma-physical-access"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.legacy_fs",
+      "kind": "module",
+      "name": "cramfs / freevxfs / jffs2 / hfsplus / udf",
+      "subsystem": "fs",
+      "weight": 5.0,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "not loaded but autoloadable via modules.dep (udf)",
+      "cve_clusters": [
+        "fs-image-parsing"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.n_hdlc",
+      "kind": "module",
+      "name": "n_hdlc",
+      "subsystem": "tty",
+      "weight": 5.5,
+      "present": false,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "not present on host",
+      "cve_clusters": [
+        "tty-ldisc-lpe"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.rds",
+      "kind": "module",
+      "name": "rds",
+      "subsystem": "net",
+      "weight": 6.5,
+      "present": false,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "not present on host",
+      "cve_clusters": [
+        "net-legacy-proto"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.tipc",
+      "kind": "module",
+      "name": "tipc",
+      "subsystem": "net",
+      "weight": 6.5,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "not loaded but autoloadable via modules.dep (tipc)",
+      "cve_clusters": [
+        "net-legacy-proto",
+        "remote-heap-overflow"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.usb_storage",
+      "kind": "module",
+      "name": "usb-storage",
+      "subsystem": "usb",
+      "weight": 4.5,
+      "present": false,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "not present on host",
+      "cve_clusters": [
+        "usb-parsing"
+      ],
+      "mitigations": [
+        "modprobe blacklist",
+        "USBGuard"
+      ]
+    },
+    {
+      "id": "ns.userns_unpriv",
+      "kind": "namespace",
+      "name": "unprivileged user namespaces",
+      "subsystem": "namespaces",
+      "weight": 9.5,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "kernel.unprivileged_userns_clone=1",
+      "cve_clusters": [
+        "netfilter-via-userns",
+        "userns-lpe"
+      ],
+      "mitigations": [
+        "sysctl kernel.unprivileged_userns_clone=0",
+        "systemd RestrictNamespaces="
+      ]
+    },
+    {
+      "id": "sc.bpf_unpriv",
+      "kind": "syscall",
+      "name": "bpf (unprivileged)",
+      "subsystem": "bpf",
+      "weight": 8.5,
+      "present": true,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "blocked: kernel.unprivileged_bpf_disabled=2",
+      "cve_clusters": [
+        "bpf-verifier"
+      ],
+      "mitigations": [
+        "sysctl kernel.unprivileged_bpf_disabled=1"
+      ]
+    },
+    {
+      "id": "sc.io_uring_setup",
+      "kind": "syscall",
+      "name": "io_uring_setup",
+      "subsystem": "io_uring",
+      "weight": 9.0,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "kernel.io_uring_disabled=0",
+      "cve_clusters": [
+        "io_uring-refcount",
+        "io_uring-uaf"
+      ],
+      "mitigations": [
+        "sysctl kernel.io_uring_disabled=2",
+        "seccomp deny io_uring_setup,io_uring_enter,io_uring_register"
+      ]
+    },
+    {
+      "id": "sc.keyctl",
+      "kind": "syscall",
+      "name": "keyctl",
+      "subsystem": "keys",
+      "weight": 6.5,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "",
+      "cve_clusters": [
+        "keyring-uaf",
+        "refcount-overflow"
+      ],
+      "mitigations": [
+        "seccomp deny keyctl,add_key,request_key"
+      ]
+    },
+    {
+      "id": "sc.perf_event_open",
+      "kind": "syscall",
+      "name": "perf_event_open",
+      "subsystem": "perf",
+      "weight": 7.5,
+      "present": true,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "blocked: kernel.perf_event_paranoid=4",
+      "cve_clusters": [
+        "infoleak",
+        "perf-lpe"
+      ],
+      "mitigations": [
+        "sysctl kernel.perf_event_paranoid=3",
+        "seccomp deny perf_event_open"
+      ]
+    },
+    {
+      "id": "sc.userfaultfd",
+      "kind": "syscall",
+      "name": "userfaultfd",
+      "subsystem": "mm",
+      "weight": 8.0,
+      "present": true,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "blocked: vm.unprivileged_userfaultfd=0",
+      "cve_clusters": [
+        "heap-grooming-primitive"
+      ],
+      "mitigations": [
+        "sysctl vm.unprivileged_userfaultfd=0",
+        "seccomp deny userfaultfd"
+      ]
+    }
+  ],
+  "workloads": [
+    {
+      "id": "w.Runner.Listener_home_runner_actions-runner_cached_2.336.0_bin_Runner.Listener",
+      "comm": "Runner.Listener",
+      "pids": [
+        2131
+      ],
+      "uid": 1001,
+      "caps_effective": [],
+      "seccomp_mode": 0,
+      "touches": []
+    },
+    {
+      "id": "w.Runner.Worker_home_runner_actions-runner_cached_2.336.0_bin_Runner.Worker",
+      "comm": "Runner.Worker",
+      "pids": [
+        2178
+      ],
+      "uid": 1001,
+      "caps_effective": [],
+      "seccomp_mode": 0,
+      "touches": []
+    },
+    {
+      "id": "w.bash_usr_bin_bash",
+      "comm": "bash",
+      "pids": [
+        2351,
+        2455
+      ],
+      "uid": 1001,
+      "caps_effective": [],
+      "seccomp_mode": 0,
+      "touches": []
+    },
+    {
+      "id": "w.hosted-compute-_opt_hca_hosted-compute-agent",
+      "comm": "hosted-compute-",
+      "pids": [
+        2079
+      ],
+      "uid": 1001,
+      "caps_effective": [],
+      "seccomp_mode": 0,
+      "touches": []
+    },
+    {
+      "id": "w.python_opt_hostedtoolcache_Python_3.11.16_x64_bin_python3.11",
+      "comm": "python",
+      "pids": [
+        2350,
+        2457
+      ],
+      "uid": 1001,
+      "caps_effective": [],
+      "seccomp_mode": 0,
+      "touches": []
+    },
+    {
+      "id": "w.sleep_usr_bin_sleep",
+      "comm": "sleep",
+      "pids": [
+        2460
+      ],
+      "uid": 1001,
+      "caps_effective": [],
+      "seccomp_mode": 0,
+      "touches": []
+    }
+  ],
+  "ledger": [
+    {
+      "workload_id": "w.Runner.Listener_home_runner_actions-runner_cached_2.336.0_bin_Runner.Listener",
+      "surface_debt": 0,
+      "marginal_contribution": 0,
+      "sole_owner_elements": [],
+      "shared_elements": [],
+      "reachable_cves": 0,
+      "explanation": ""
+    },
+    {
+      "workload_id": "w.Runner.Worker_home_runner_actions-runner_cached_2.336.0_bin_Runner.Worker",
+      "surface_debt": 0,
+      "marginal_contribution": 0,
+      "sole_owner_elements": [],
+      "shared_elements": [],
+      "reachable_cves": 0,
+      "explanation": ""
+    },
+    {
+      "workload_id": "w.bash_usr_bin_bash",
+      "surface_debt": 0,
+      "marginal_contribution": 0,
+      "sole_owner_elements": [],
+      "shared_elements": [],
+      "reachable_cves": 0,
+      "explanation": ""
+    },
+    {
+      "workload_id": "w.hosted-compute-_opt_hca_hosted-compute-agent",
+      "surface_debt": 0,
+      "marginal_contribution": 0,
+      "sole_owner_elements": [],
+      "shared_elements": [],
+      "reachable_cves": 0,
+      "explanation": ""
+    },
+    {
+      "workload_id": "w.python_opt_hostedtoolcache_Python_3.11.16_x64_bin_python3.11",
+      "surface_debt": 0,
+      "marginal_contribution": 0,
+      "sole_owner_elements": [],
+      "shared_elements": [],
+      "reachable_cves": 0,
+      "explanation": ""
+    },
+    {
+      "workload_id": "w.sleep_usr_bin_sleep",
+      "surface_debt": 0,
+      "marginal_contribution": 0,
+      "sole_owner_elements": [],
+      "shared_elements": [],
+      "reachable_cves": 0,
+      "explanation": ""
+    }
+  ],
+  "orphaned": {
+    "elements": [
+      "dev.kvm",
+      "mod.legacy_fs",
+      "mod.tipc",
+      "ns.userns_unpriv"
+    ],
+    "total_weight": 28.0,
+    "cves_neutralizable": 7
+  },
+  "plan": [
+    {
+      "step": 1,
+      "action": "seccomp_filter",
+      "targets": [
+        "io_uring_setup"
+      ],
+      "cves_killed": 3,
+      "weight_removed": 0.0,
+      "breakage_risk": "none",
+      "breakage_note": "Every target is orphaned: no live workload touched any of them during the observation window.",
+      "detection": "journalctl -u <unit> -b | grep -i 'bad system call'",
+      "requires_reboot": false,
+      "artifact": {
+        "path": "/etc/ksl/seccomp_filter.conf",
+        "content": "# io_uring: deny listed syscalls via OCI seccomp\n{\n  \"defaultAction\": \"SCMP_ACT_ALLOW\",\n  \"syscalls\": [\n    {\n      \"action\": \"SCMP_ACT_ERRNO\",\n      \"errnoRet\": 38,\n      \"names\": [\n        \"io_uring_enter\",\n        \"io_uring_register\",\n        \"io_uring_setup\"\n      ]\n    }\n  ]\n}\n"
+      },
+      "revert": "remove the seccomp profile from the unit and restart it"
+    },
+    {
+      "step": 2,
+      "action": "blacklist_module",
+      "targets": [
+        "cramfs",
+        "freevxfs",
+        "hfsplus",
+        "jffs2",
+        "tipc",
+        "udf"
+      ],
+      "cves_killed": 2,
+      "weight_removed": 11.5,
+      "breakage_risk": "none",
+      "breakage_note": "Every target is orphaned: no live workload touched any of them during the observation window.",
+      "detection": "modprobe <target>; systemctl --failed; journalctl -p err -b --no-pager | tail -50",
+      "requires_reboot": false,
+      "artifact": {
+        "path": "/etc/modprobe.d/ksl-blacklist.conf",
+        "content": "# generated by kernel-surface-ledger - review before applying - revert: rm /etc/modprobe.d/ksl-blacklist.conf && update-initramfs -u\n# blacklist alone does not prevent explicit insertion or autoload, so each\n# module also gets an install override pointing at /bin/false.\n\nblacklist cramfs\ninstall cramfs /bin/false\nblacklist freevxfs\ninstall freevxfs /bin/false\nblacklist hfsplus\ninstall hfsplus /bin/false\nblacklist jffs2\ninstall jffs2 /bin/false\nblacklist tipc\ninstall tipc /bin/false\nblacklist udf\ninstall udf /bin/false\n"
+      },
+      "revert": "rm /etc/modprobe.d/ksl-blacklist.conf && update-initramfs -u"
+    },
+    {
+      "step": 3,
+      "action": "seccomp_filter",
+      "targets": [
+        "keyctl"
+      ],
+      "cves_killed": 2,
+      "weight_removed": 0.0,
+      "breakage_risk": "none",
+      "breakage_note": "Every target is orphaned: no live workload touched any of them during the observation window.",
+      "detection": "journalctl -u <unit> -b | grep -i 'bad system call'",
+      "requires_reboot": false,
+      "artifact": {
+        "path": "/etc/ksl/seccomp_filter.conf",
+        "content": "# keys: deny listed syscalls via OCI seccomp\n{\n  \"defaultAction\": \"SCMP_ACT_ALLOW\",\n  \"syscalls\": [\n    {\n      \"action\": \"SCMP_ACT_ERRNO\",\n      \"errnoRet\": 38,\n      \"names\": [\n        \"add_key\",\n        \"keyctl\",\n        \"request_key\"\n      ]\n    }\n  ]\n}\n"
+      },
+      "revert": "remove the seccomp profile from the unit and restart it"
+    },
+    {
+      "step": 4,
+      "action": "sysctl_set",
+      "targets": [
+        "kernel.kptr_restrict=2",
+        "kernel.modules_disabled=1",
+        "kernel.unprivileged_userns_clone=0"
+      ],
+      "cves_killed": 5,
+      "weight_removed": 22.0,
+      "breakage_risk": "low",
+      "breakage_note": "Some targets are in active use or are policy changes with future-facing effects; review each target before applying.",
+      "detection": "sysctl kernel.perf_event_paranoid kernel.kptr_restrict kernel.dmesg_restrict",
+      "requires_reboot": false,
+      "artifact": {
+        "path": "/etc/sysctl.d/99-ksl-hardening.conf",
+        "content": "# generated by kernel-surface-ledger - review before applying - revert: rm /etc/sysctl.d/99-ksl-hardening.conf && sysctl --system\n\nkernel.kptr_restrict = 2\nkernel.modules_disabled = 1\nkernel.unprivileged_userns_clone = 0\n"
+      },
+      "revert": "rm /etc/sysctl.d/99-ksl-hardening.conf && sysctl --system"
+    },
+    {
+      "step": 5,
+      "action": "remove_devnode_access",
+      "targets": [
+        "/dev/kvm"
+      ],
+      "cves_killed": 1,
+      "weight_removed": 7.0,
+      "breakage_risk": "none",
+      "breakage_note": "Every target is orphaned: no live workload touched any of them during the observation window.",
+      "detection": "ls -l <devnode>; virsh list --all",
+      "requires_reboot": false,
+      "artifact": {
+        "path": "/etc/ksl/remove_devnode_access.conf",
+        "content": "# generated by kernel-surface-ledger - review before applying - revert: rm the rule then: udevadm control --reload && udevadm trigger /dev/kvm\nKERNEL==\"kvm\", GROUP=\"kvm\", MODE=\"0660\"\n"
+      },
+      "revert": "remove the udev rule and run udevadm control --reload"
+    }
+  ],
+  "score": {
+    "total_surface_weight": 149.0,
+    "reachable_surface_weight": 61.5,
+    "reachable_cve_count": 14,
+    "orphan_ratio": 0.455,
+    "projected_after_plan": {
+      "reachable_surface_weight": 21.0,
+      "reachable_cve_count": 6
+    }
+  }
+}
