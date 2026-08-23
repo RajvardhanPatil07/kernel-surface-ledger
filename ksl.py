@@ -20,6 +20,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 
 
+from ksl_env import load_dotenv
+
+
 def load_curated() -> tuple[dict, dict]:
     """Load the human-curated weights and CVE map."""
     import yaml
@@ -31,6 +34,7 @@ def load_curated() -> tuple[dict, dict]:
 
 def cmd_scan(args: argparse.Namespace) -> int:
     """Collect (or reuse) a snapshot, score it, optionally narrate it."""
+    load_dotenv()  # explicit env vars always win over .env
     from collector.collect import collect_raw
     from engine import report as report_engine
 

@@ -226,6 +226,9 @@ def main(argv: list[str] | None = None) -> int:
     """CLI: python -m explain.explain -i report.json [-o out.json]."""
     import argparse
 
+    from ksl_env import load_dotenv
+
+    load_dotenv()  # explicit env vars always win over .env
     parser = argparse.ArgumentParser(description="Add LLM explanations to a ksl report")
     parser.add_argument("-i", "--input", required=True, help="input report.json")
     parser.add_argument("-o", "--output", help="output path (default: overwrite input)")
