@@ -1,0 +1,60 @@
+name: collect
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install jsonschema PyYAML
+      - name: Generate background workloads for observation
+        run: |
+          python -m http.server 8080 --directory /tmp &
+          while true; do curl -sf http://127.0.0.1:8080/ >/dev/null || true; sleep 0.2; done &
+          sleep 2
+      - name: Run read-only collector on the real runner host
+        run: python -m collector.collect -o raw.json
+      - name: Score the snapshot into a validated report
+        run: |
+          python - <<'PY'
+          import json, sys, yaml
+          from engine import report as engine
+
+          weights = yaml.safe_load(open('data/weights.yaml'))
+          cve_map = json.load(open('data/cve-map.json'))
+          raw = json.load(open('raw.json'))
+          built = engine.build_report(raw, weights, cve_map)
+          with open('report.json', 'w') as fh:
+              json.dump(built, fh, indent=2)
+          print('elements', len(built['surface_elements']),
+                '| workloads', len(built['workloads']),
+                '| orphaned', len(built['orphaned']['elements']))
+          PY
+      - name: Commit the fresh scan
+        run: |
+          git config user.name ksl-bot
+          git config user.email actions@users.noreply.github.com
+          mkdir -p data/reports
+          mv report.json data/reports/report.json
+          git add data/reports/report.json
+          if git diff --cached --quiet; then
+            echo "no changes to report"
+          else
+            git commit -m "scan: refresh runner report from ${{ github.sha }}"
+            git push
+          fi

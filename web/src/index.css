@@ -1,0 +1,100 @@
+@import 'tailwindcss';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+@import '@fontsource/jetbrains-mono/700.css';
+@import '@fontsource/jetbrains-mono/800.css';
+
+@theme {
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-ground: #0a0a0a;
+  --color-panel: #111111;
+  --color-rule: #262626;
+  --color-rule-soft: #1c1c1c;
+  --color-ink: #e8e8e8;
+  --color-ink-dim: #9b9b9b;
+  --color-ink-faint: #8f8f8f;
+  --color-amber: #f5a623;
+  --color-amber-deep: #d29522;
+  --color-danger: #e5534b;
+  --color-safe: #57ab5a;
+
+  --text-hero: 6.5rem;
+}
+
+html {
+  background: var(--color-ground);
+  color-scheme: dark;
+  scrollbar-color: #333 var(--color-ground);
+}
+
+body {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+}
+
+::selection {
+  background: var(--color-amber);
+  color: #0a0a0a;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes arrow-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.arrow-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: arrow-draw 600ms ease-out 900ms both;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.rise-in {
+  animation: rise-in 400ms ease-out 1350ms both;
+}
+
+.sankey-label:focus-visible {
+  stroke: var(--color-amber);
+  stroke-width: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

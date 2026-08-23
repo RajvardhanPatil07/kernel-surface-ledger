@@ -1,0 +1,670 @@
+{
+  "meta": {
+    "kernel_release": "6.8.0-45-generic",
+    "arch": "x86_64",
+    "distro": "Ubuntu 24.04.1 LTS",
+    "collected_at": "2026-08-22T15:04:11Z",
+    "trace_seconds": 60,
+    "trace_backend": "strace",
+    "ran_as_root": true,
+    "skipped": [],
+    "ksl_version": "0.1.0"
+  },
+  "surface_elements": [
+    {
+      "id": "cap.sys_admin_unpriv",
+      "kind": "capability",
+      "name": "CAP_SYS_ADMIN held by non-root workload",
+      "subsystem": "capabilities",
+      "weight": 9.0,
+      "present": false,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "no non-root workload holds CAP_SYS_ADMIN",
+      "cve_clusters": [
+        "cap-sys-admin-abuse"
+      ],
+      "mitigations": [
+        "systemd NoNewPrivileges=yes and AmbientCapabilities= drop"
+      ]
+    },
+    {
+      "id": "cfg.dmesg_open",
+      "kind": "sysctl",
+      "name": "kernel.dmesg_restrict = 0",
+      "subsystem": "infoleak",
+      "weight": 4.0,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": true,
+      "gate_reason": "kernel.dmesg_restrict=0",
+      "cve_clusters": [
+        "infoleak"
+      ],
+      "mitigations": [
+        "sysctl kernel.dmesg_restrict=1"
+      ]
+    },
+    {
+      "id": "cfg.kconfig_compat",
+      "kind": "kconfig",
+      "name": "CONFIG_COMPAT (32-bit emulation)",
+      "subsystem": "compat",
+      "weight": 5.5,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "compiled in",
+      "cve_clusters": [
+        "compat-ioctls"
+      ],
+      "mitigations": []
+    },
+    {
+      "id": "cfg.module_autoload",
+      "kind": "sysctl",
+      "name": "unrestricted module autoload",
+      "subsystem": "modules",
+      "weight": 7.5,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": true,
+      "gate_reason": "kernel.modules_disabled=0",
+      "cve_clusters": [
+        "autoload-amplifier"
+      ],
+      "mitigations": [
+        "sysctl kernel.modules_disabled=1 after boot",
+        "modprobe install <mod> /bin/false"
+      ]
+    },
+    {
+      "id": "cfg.no_kptr_restrict",
+      "kind": "sysctl",
+      "name": "kernel.kptr_restrict < 2",
+      "subsystem": "infoleak",
+      "weight": 5.0,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": true,
+      "gate_reason": "kernel.kptr_restrict=1",
+      "cve_clusters": [
+        "infoleak"
+      ],
+      "mitigations": [
+        "sysctl kernel.kptr_restrict=2"
+      ]
+    },
+    {
+      "id": "cfg.no_lockdown",
+      "kind": "lsm",
+      "name": "lockdown LSM inactive",
+      "subsystem": "lsm",
+      "weight": 6.0,
+      "present": true,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "root-only impact",
+      "cve_clusters": [
+        "kernel-integrity"
+      ],
+      "mitigations": [
+        "boot with lockdown=confidentiality"
+      ]
+    },
+    {
+      "id": "dev.kvm",
+      "kind": "devnode",
+      "name": "/dev/kvm",
+      "subsystem": "kvm",
+      "weight": 7.0,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": true,
+      "gate_reason": "mode 0666 grants non-root",
+      "cve_clusters": [
+        "kvm-ioctl"
+      ],
+      "mitigations": [
+        "restrict group ownership to kvm"
+      ]
+    },
+    {
+      "id": "dev.mem",
+      "kind": "devnode",
+      "name": "/dev/mem",
+      "subsystem": "mm",
+      "weight": 9.0,
+      "present": true,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "blocked: mode 0640 denies non-root",
+      "cve_clusters": [
+        "physical-memory-access"
+      ],
+      "mitigations": [
+        "boot lockdown=confidentiality",
+        "CONFIG_IO_STRICT_DEVMEM"
+      ]
+    },
+    {
+      "id": "mod.bluetooth",
+      "kind": "module",
+      "name": "bluetooth",
+      "subsystem": "bluetooth",
+      "weight": 6.0,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "loaded: bluetooth",
+      "cve_clusters": [
+        "bluetooth-parsing"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.dccp",
+      "kind": "module",
+      "name": "dccp",
+      "subsystem": "net",
+      "weight": 7.0,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "not loaded but autoloadable via modules.dep (dccp)",
+      "cve_clusters": [
+        "dccp-uaf",
+        "net-legacy-proto"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.firewire_core",
+      "kind": "module",
+      "name": "firewire-core",
+      "subsystem": "firewire",
+      "weight": 6.0,
+      "present": false,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "not present on host",
+      "cve_clusters": [
+        "dma-physical-access"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.legacy_fs",
+      "kind": "module",
+      "name": "cramfs / freevxfs / jffs2 / hfsplus / udf",
+      "subsystem": "fs",
+      "weight": 5.0,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "not loaded but autoloadable via modules.dep (cramfs, freevxfs, hfsplus, jffs2, udf)",
+      "cve_clusters": [
+        "fs-image-parsing"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.n_hdlc",
+      "kind": "module",
+      "name": "n_hdlc",
+      "subsystem": "tty",
+      "weight": 5.5,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "not loaded but autoloadable via modules.dep (n_hdlc)",
+      "cve_clusters": [
+        "tty-ldisc-lpe"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.rds",
+      "kind": "module",
+      "name": "rds",
+      "subsystem": "net",
+      "weight": 6.5,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "not loaded but autoloadable via modules.dep (rds)",
+      "cve_clusters": [
+        "net-legacy-proto"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.tipc",
+      "kind": "module",
+      "name": "tipc",
+      "subsystem": "net",
+      "weight": 6.5,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "not loaded but autoloadable via modules.dep (tipc)",
+      "cve_clusters": [
+        "net-legacy-proto",
+        "remote-heap-overflow"
+      ],
+      "mitigations": [
+        "modprobe blacklist and install /bin/false"
+      ]
+    },
+    {
+      "id": "mod.usb_storage",
+      "kind": "module",
+      "name": "usb-storage",
+      "subsystem": "usb",
+      "weight": 4.5,
+      "present": false,
+      "reachable_unpriv": false,
+      "used": true,
+      "gate_reason": "not present on host",
+      "cve_clusters": [
+        "usb-parsing"
+      ],
+      "mitigations": [
+        "modprobe blacklist",
+        "USBGuard"
+      ]
+    },
+    {
+      "id": "ns.userns_unpriv",
+      "kind": "namespace",
+      "name": "unprivileged user namespaces",
+      "subsystem": "namespaces",
+      "weight": 9.5,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": true,
+      "gate_reason": "kernel.unprivileged_userns_clone=1",
+      "cve_clusters": [
+        "netfilter-via-userns",
+        "userns-lpe"
+      ],
+      "mitigations": [
+        "sysctl kernel.unprivileged_userns_clone=0",
+        "systemd RestrictNamespaces="
+      ]
+    },
+    {
+      "id": "sc.bpf_unpriv",
+      "kind": "syscall",
+      "name": "bpf (unprivileged)",
+      "subsystem": "bpf",
+      "weight": 8.5,
+      "present": true,
+      "reachable_unpriv": false,
+      "used": false,
+      "gate_reason": "blocked: kernel.unprivileged_bpf_disabled=1",
+      "cve_clusters": [
+        "bpf-verifier"
+      ],
+      "mitigations": [
+        "sysctl kernel.unprivileged_bpf_disabled=1"
+      ]
+    },
+    {
+      "id": "sc.io_uring_setup",
+      "kind": "syscall",
+      "name": "io_uring_setup",
+      "subsystem": "io_uring",
+      "weight": 9.0,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": true,
+      "gate_reason": "kernel.io_uring_disabled=0",
+      "cve_clusters": [
+        "io_uring-refcount",
+        "io_uring-uaf"
+      ],
+      "mitigations": [
+        "sysctl kernel.io_uring_disabled=2",
+        "seccomp deny io_uring_setup,io_uring_enter,io_uring_register"
+      ]
+    },
+    {
+      "id": "sc.keyctl",
+      "kind": "syscall",
+      "name": "keyctl",
+      "subsystem": "keys",
+      "weight": 6.5,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": true,
+      "gate_reason": "",
+      "cve_clusters": [
+        "keyring-uaf",
+        "refcount-overflow"
+      ],
+      "mitigations": [
+        "seccomp deny keyctl,add_key,request_key"
+      ]
+    },
+    {
+      "id": "sc.perf_event_open",
+      "kind": "syscall",
+      "name": "perf_event_open",
+      "subsystem": "perf",
+      "weight": 7.5,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "kernel.perf_event_paranoid=2",
+      "cve_clusters": [
+        "infoleak",
+        "perf-lpe"
+      ],
+      "mitigations": [
+        "sysctl kernel.perf_event_paranoid=3",
+        "seccomp deny perf_event_open"
+      ]
+    },
+    {
+      "id": "sc.userfaultfd",
+      "kind": "syscall",
+      "name": "userfaultfd",
+      "subsystem": "mm",
+      "weight": 8.0,
+      "present": true,
+      "reachable_unpriv": true,
+      "used": false,
+      "gate_reason": "vm.unprivileged_userfaultfd=1",
+      "cve_clusters": [
+        "heap-grooming-primitive"
+      ],
+      "mitigations": [
+        "sysctl vm.unprivileged_userfaultfd=0",
+        "seccomp deny userfaultfd"
+      ]
+    }
+  ],
+  "workloads": [
+    {
+      "id": "w.dockerd",
+      "comm": "dockerd",
+      "unit": "docker.service",
+      "pids": [
+        1284
+      ],
+      "uid": 0,
+      "caps_effective": [
+        "CAP_21"
+      ],
+      "seccomp_mode": 0,
+      "touches": [
+        "ns.userns_unpriv",
+        "sc.io_uring_setup",
+        "sc.keyctl"
+      ]
+    },
+    {
+      "id": "w.libvirtd",
+      "comm": "libvirtd",
+      "unit": "libvirtd.service",
+      "pids": [
+        1622
+      ],
+      "uid": 0,
+      "caps_effective": [
+        "CAP_21"
+      ],
+      "seccomp_mode": 0,
+      "touches": [
+        "dev.kvm"
+      ]
+    },
+    {
+      "id": "w.nginx",
+      "comm": "nginx",
+      "unit": "nginx.service",
+      "pids": [
+        2011
+      ],
+      "uid": 33,
+      "caps_effective": [],
+      "seccomp_mode": 0,
+      "touches": [
+        "sc.io_uring_setup"
+      ]
+    },
+    {
+      "id": "w.sshd",
+      "comm": "sshd",
+      "unit": "ssh.service",
+      "pids": [
+        980
+      ],
+      "uid": 0,
+      "caps_effective": [
+        "CAP_19"
+      ],
+      "seccomp_mode": 2,
+      "touches": [
+        "sc.keyctl"
+      ]
+    },
+    {
+      "id": "w.udisksd",
+      "comm": "udisksd",
+      "unit": "udisks2.service",
+      "pids": [
+        1105
+      ],
+      "uid": 0,
+      "caps_effective": [
+        "CAP_21"
+      ],
+      "seccomp_mode": 0,
+      "touches": [
+        "mod.usb_storage"
+      ]
+    }
+  ],
+  "ledger": [
+    {
+      "workload_id": "w.dockerd",
+      "surface_debt": 17.25,
+      "marginal_contribution": 9.5,
+      "sole_owner_elements": [
+        "ns.userns_unpriv"
+      ],
+      "shared_elements": [
+        "sc.io_uring_setup",
+        "sc.keyctl"
+      ],
+      "reachable_cves": 9,
+      "explanation": "dockerd is the only workload on this host traced using unprivileged user namespaces; it uses them to map container UIDs and to construct network namespaces for bridge networking. It shares io_uring with nginx and keyctl with sshd, so those cannot be attributed to it alone.\n\nUser namespaces are a surface amplifier rather than a single defect: they grant an unprivileged process access to subsystems written on the assumption of CAP_SYS_ADMIN, which is why they appear as the first link in most recent local privilege escalation chains.\n\nRootless Podman with a restricted seccomp profile provides the same container workflow without holding host-wide unprivileged user namespaces open."
+    },
+    {
+      "workload_id": "w.libvirtd",
+      "surface_debt": 7.0,
+      "marginal_contribution": 7.0,
+      "sole_owner_elements": [
+        "dev.kvm"
+      ],
+      "shared_elements": [],
+      "reachable_cves": 1,
+      "explanation": "libvirtd is the sole consumer of /dev/kvm on this host, which it needs to create hardware-accelerated guests. The device node is currently mode 0666, so every local user can reach its very large ioctl surface, not just the virtualisation daemon.\n\nThis one is cheap to fix without touching functionality: restrict /dev/kvm to the kvm group and add libvirtd's user to it. The daemon keeps working and the surface stops being unprivileged-reachable."
+    },
+    {
+      "workload_id": "w.nginx",
+      "surface_debt": 4.5,
+      "marginal_contribution": 0,
+      "sole_owner_elements": [],
+      "shared_elements": [
+        "sc.io_uring_setup"
+      ],
+      "reachable_cves": 3,
+      "explanation": "nginx uses io_uring for asynchronous file serving. It shares this element with dockerd, so its marginal contribution is zero: removing nginx would not close io_uring, because dockerd would keep it open.\n\nA per-service seccomp filter denying the io_uring family confines nginx specifically, which is worth doing even though it does not reduce the host-wide score - it removes nginx as a pivot without affecting dockerd."
+    },
+    {
+      "workload_id": "w.udisksd",
+      "surface_debt": 4.5,
+      "marginal_contribution": 4.5,
+      "sole_owner_elements": [
+        "mod.usb_storage"
+      ],
+      "shared_elements": [],
+      "reachable_cves": 1,
+      "explanation": "udisksd holds the usb-storage module open to provide automatic removable media handling on a machine that, per its systemd target, is running headless.\n\nIf this host does not need removable media, masking udisks2.service and blacklisting usb-storage removes the surface entirely. If it does, USBGuard is the appropriate control instead."
+    },
+    {
+      "workload_id": "w.sshd",
+      "surface_debt": 3.25,
+      "marginal_contribution": 0,
+      "sole_owner_elements": [],
+      "shared_elements": [
+        "sc.keyctl"
+      ],
+      "reachable_cves": 2,
+      "explanation": "sshd touches keyctl for session keyring setup and shares it with dockerd, so it owns none of this surface exclusively and its marginal contribution is zero.\n\nsshd already runs with seccomp_mode 2, which is the correct posture; no change is recommended for this workload."
+    }
+  ],
+  "orphaned": {
+    "elements": [
+      "mod.bluetooth",
+      "mod.dccp",
+      "mod.legacy_fs",
+      "mod.n_hdlc",
+      "mod.rds",
+      "mod.tipc",
+      "sc.perf_event_open",
+      "sc.userfaultfd"
+    ],
+    "total_weight": 52.0,
+    "cves_neutralizable": 7
+  },
+  "plan": [
+    {
+      "step": 1,
+      "action": "blacklist_module",
+      "targets": [
+        "bluetooth",
+        "cramfs",
+        "dccp",
+        "freevxfs",
+        "hfsplus",
+        "jffs2",
+        "n_hdlc",
+        "rds",
+        "tipc",
+        "udf"
+      ],
+      "cves_killed": 5,
+      "weight_removed": 36.5,
+      "breakage_risk": "none",
+      "breakage_note": "Every target is orphaned: no live workload touched any of them during the observation window.",
+      "detection": "modprobe <target>; systemctl --failed; journalctl -p err -b --no-pager | tail -50",
+      "requires_reboot": false,
+      "artifact": {
+        "path": "/etc/modprobe.d/ksl-blacklist.conf",
+        "content": "# generated by kernel-surface-ledger - review before applying - revert: rm /etc/modprobe.d/ksl-blacklist.conf && update-initramfs -u\n# blacklist alone does not prevent explicit insertion or autoload, so each\n# module also gets an install override pointing at /bin/false.\n\nblacklist bluetooth\ninstall bluetooth /bin/false\nblacklist cramfs\ninstall cramfs /bin/false\nblacklist dccp\ninstall dccp /bin/false\nblacklist freevxfs\ninstall freevxfs /bin/false\nblacklist hfsplus\ninstall hfsplus /bin/false\nblacklist jffs2\ninstall jffs2 /bin/false\nblacklist n_hdlc\ninstall n_hdlc /bin/false\nblacklist rds\ninstall rds /bin/false\nblacklist tipc\ninstall tipc /bin/false\nblacklist udf\ninstall udf /bin/false\n"
+      },
+      "revert": "rm /etc/modprobe.d/ksl-blacklist.conf && update-initramfs -u"
+    },
+    {
+      "step": 2,
+      "action": "seccomp_filter",
+      "targets": [
+        "perf_event_open"
+      ],
+      "cves_killed": 2,
+      "weight_removed": 0.0,
+      "breakage_risk": "none",
+      "breakage_note": "Every target is orphaned: no live workload touched any of them during the observation window.",
+      "detection": "journalctl -u <unit> -b | grep -i 'bad system call'",
+      "requires_reboot": false,
+      "artifact": {
+        "path": "/etc/ksl/seccomp_filter.conf",
+        "content": "# perf: deny listed syscalls via OCI seccomp\n{\n  \"defaultAction\": \"SCMP_ACT_ALLOW\",\n  \"syscalls\": [\n    {\n      \"action\": \"SCMP_ACT_ERRNO\",\n      \"errnoRet\": 38,\n      \"names\": [\n        \"perf_event_open\"\n      ]\n    }\n  ]\n}\n"
+      },
+      "revert": "remove the seccomp profile from the unit and restart it"
+    },
+    {
+      "step": 3,
+      "action": "sysctl_set",
+      "targets": [
+        "kernel.dmesg_restrict=1",
+        "kernel.kptr_restrict=2",
+        "kernel.modules_disabled=1",
+        "kernel.unprivileged_userns_clone=0"
+      ],
+      "cves_killed": 5,
+      "weight_removed": 26.0,
+      "breakage_risk": "low",
+      "breakage_note": "Some targets are in active use or are policy changes with future-facing effects; review each target before applying.",
+      "detection": "sysctl kernel.perf_event_paranoid kernel.kptr_restrict kernel.dmesg_restrict",
+      "requires_reboot": false,
+      "artifact": {
+        "path": "/etc/sysctl.d/99-ksl-hardening.conf",
+        "content": "# generated by kernel-surface-ledger - review before applying - revert: rm /etc/sysctl.d/99-ksl-hardening.conf && sysctl --system\n\nkernel.dmesg_restrict = 1\nkernel.kptr_restrict = 2\nkernel.modules_disabled = 1\nkernel.unprivileged_userns_clone = 0\n"
+      },
+      "revert": "rm /etc/sysctl.d/99-ksl-hardening.conf && sysctl --system"
+    },
+    {
+      "step": 4,
+      "action": "seccomp_filter",
+      "targets": [
+        "userfaultfd"
+      ],
+      "cves_killed": 1,
+      "weight_removed": 0.0,
+      "breakage_risk": "none",
+      "breakage_note": "Every target is orphaned: no live workload touched any of them during the observation window.",
+      "detection": "journalctl -u <unit> -b | grep -i 'bad system call'",
+      "requires_reboot": false,
+      "artifact": {
+        "path": "/etc/ksl/seccomp_filter.conf",
+        "content": "# mm: deny listed syscalls via OCI seccomp\n{\n  \"defaultAction\": \"SCMP_ACT_ALLOW\",\n  \"syscalls\": [\n    {\n      \"action\": \"SCMP_ACT_ERRNO\",\n      \"errnoRet\": 38,\n      \"names\": [\n        \"userfaultfd\"\n      ]\n    }\n  ]\n}\n"
+      },
+      "revert": "remove the seccomp profile from the unit and restart it"
+    },
+    {
+      "step": 5,
+      "action": "seccomp_filter",
+      "targets": [
+        "io_uring_setup"
+      ],
+      "cves_killed": 3,
+      "weight_removed": 0.0,
+      "breakage_risk": "low",
+      "breakage_note": "Some targets are in active use or are policy changes with future-facing effects; review each target before applying.",
+      "detection": "journalctl -u <unit> -b | grep -i 'bad system call'",
+      "requires_reboot": false,
+      "artifact": {
+        "path": "/etc/ksl/seccomp_filter.conf",
+        "content": "# io_uring: deny listed syscalls via OCI seccomp\n{\n  \"defaultAction\": \"SCMP_ACT_ALLOW\",\n  \"syscalls\": [\n    {\n      \"action\": \"SCMP_ACT_ERRNO\",\n      \"errnoRet\": 38,\n      \"names\": [\n        \"io_uring_enter\",\n        \"io_uring_register\",\n        \"io_uring_setup\"\n      ]\n    }\n  ]\n}\n"
+      },
+      "revert": "remove the seccomp profile from the unit and restart it"
+    }
+  ],
+  "score": {
+    "total_surface_weight": 149.0,
+    "reachable_surface_weight": 106.0,
+    "reachable_cve_count": 19,
+    "orphan_ratio": 0.491,
+    "projected_after_plan": {
+      "reachable_surface_weight": 43.5,
+      "reachable_cve_count": 9
+    }
+  }
+}
