@@ -17,16 +17,22 @@ export function Section({
   children: ReactNode;
 }) {
   return (
-    <section id={id} className="scroll-mt-20 border-t border-border py-12">
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
-        <p className="text-[11px] uppercase tracking-[0.2em] text-amber-dim">{label}</p>
-        <h2 className="mt-2 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-          {title}
-        </h2>
-        {lede ? (
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">{lede}</p>
-        ) : null}
-        <div className="mt-8">{children}</div>
+    <section id={id} className="section-shell scroll-mt-24 border-t border-border py-16 sm:py-20">
+      <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-8 px-5 sm:px-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-12 lg:px-10">
+        <div className="self-start lg:sticky lg:top-8">
+          <p className="label-caps mono text-muted-foreground">{label}</p>
+        </div>
+        <div>
+          <h2 className="display-tight max-w-4xl text-3xl font-semibold leading-[0.95] text-foreground sm:text-4xl lg:text-5xl">
+            {title}
+          </h2>
+          {lede ? (
+            <p className="mt-5 max-w-3xl text-sm leading-7 tracking-[0.01em] text-muted-foreground sm:text-[15px]">
+              {lede}
+            </p>
+          ) : null}
+          <div className="mt-10">{children}</div>
+        </div>
       </div>
     </section>
   );
@@ -46,26 +52,26 @@ export function Figure({
   hint?: string | undefined;
 }) {
   return (
-    <div className="border border-border bg-surface p-4">
-      <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
-      <p className="mt-3 flex flex-wrap items-baseline gap-2">
+    <div className="border-y border-border bg-transparent px-1 py-5 sm:px-2 sm:py-6">
+      <p className="label-caps text-muted-foreground">{label}</p>
+      <p className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <span
           className={cn(
-            "tnum text-3xl font-bold leading-none sm:text-4xl",
-            emphasis ? "text-amber" : "text-foreground",
+            "display-tight tnum text-5xl font-semibold leading-none sm:text-6xl",
+            emphasis ? "text-foreground" : "text-foreground",
           )}
         >
           {value}
         </span>
         {projected ? (
-          <span className="tnum text-sm text-muted-foreground">
+          <span className="tnum mono text-sm text-muted-foreground">
             <span aria-hidden>→ </span>
             <span className="sr-only">after plan </span>
-            <span className="text-ok">{projected}</span>
+            <span className="text-foreground">{projected}</span>
           </span>
         ) : null}
       </p>
-      {hint ? <p className="mt-2 text-[11px] leading-snug text-muted-foreground">{hint}</p> : null}
+      {hint ? <p className="mt-3 max-w-xs text-[11px] leading-5 text-muted-foreground">{hint}</p> : null}
     </div>
   );
 }
@@ -80,17 +86,17 @@ export function Chip({
   title?: string | undefined;
 }) {
   const tones: Record<string, string> = {
-    neutral: "border-border bg-surface-raised text-muted-foreground",
-    amber: "border-amber-dim bg-surface-raised text-amber",
-    orphan: "border-orphan/40 bg-surface-raised text-orphan",
-    ok: "border-ok/40 bg-surface-raised text-ok",
-    danger: "border-destructive/50 bg-surface-raised text-destructive",
+    neutral: "border-border bg-surface text-muted-foreground",
+    amber: "border-foreground bg-foreground text-background",
+    orphan: "border-orphan/50 bg-surface text-orphan",
+    ok: "border-ok/50 bg-surface text-ok",
+    danger: "border-destructive/50 bg-surface text-destructive",
   };
   return (
     <span
       title={title}
       className={cn(
-        "inline-flex items-center gap-1 border px-1.5 py-0.5 text-[11px] leading-tight",
+        "inline-flex items-center gap-1 border px-2 py-1 text-[10px] uppercase tracking-[0.14em]",
         tones[tone],
       )}
     >
@@ -111,7 +117,7 @@ export function RiskBadge({ risk }: { risk: KslBreakageRisk }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center border bg-surface-raised px-2 py-0.5 text-[11px] uppercase tracking-[0.12em]",
+        "mono inline-flex items-center border bg-surface px-2 py-1 text-[10px] uppercase tracking-[0.12em]",
         tone,
       )}
     >
@@ -126,14 +132,10 @@ export function BoolGlyph({ value, label }: { value: boolean; label: string }) {
     <span
       className={cn(
         "inline-flex items-center gap-1 text-xs",
-        value ? "text-amber" : "text-muted-foreground",
+        value ? "text-foreground" : "text-muted-foreground",
       )}
     >
-      {value ? (
-        <Check className="size-3.5" aria-hidden />
-      ) : (
-        <Minus className="size-3.5" aria-hidden />
-      )}
+      {value ? <Check className="size-3.5" aria-hidden /> : <Minus className="size-3.5" aria-hidden />}
       <span className="sr-only">
         {label}: {value ? "yes" : "no"}
       </span>
@@ -145,12 +147,8 @@ export function BoolGlyph({ value, label }: { value: boolean; label: string }) {
 export function WeightBar({ value, max }: { value: number; max: number }) {
   const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
   return (
-    <span
-      className="ml-2 inline-block h-1.5 w-16 bg-grid align-middle"
-      role="presentation"
-      aria-hidden
-    >
-      <span className="block h-full bg-amber" style={{ width: `${pct}%` }} />
+    <span className="ml-2 inline-block h-px w-20 bg-grid align-middle" role="presentation" aria-hidden>
+      <span className="block h-full bg-foreground" style={{ width: `${pct}%` }} />
     </span>
   );
 }
@@ -178,22 +176,20 @@ export function CodeBlock({
 
   return (
     <div className="border border-border bg-background">
-      <div className="flex items-center justify-between gap-2 border-b border-border bg-surface px-2 py-1">
-        <span className="truncate text-[11px] text-muted-foreground">{path ?? "artifact"}</span>
+      <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
+        <span className="mono truncate text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
+          {path ?? "artifact"}
+        </span>
         <button
           type="button"
           onClick={copy}
-          className="inline-flex shrink-0 items-center gap-1 border border-border px-1.5 py-0.5 text-[11px] text-muted-foreground transition-colors hover:border-amber-dim hover:text-amber"
+          className="mono inline-flex shrink-0 items-center gap-1 border border-border px-2 py-1 text-[10px] uppercase tracking-[0.08em] text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
         >
-          {copied ? (
-            <Check className="size-3" aria-hidden />
-          ) : (
-            <Copy className="size-3" aria-hidden />
-          )}
+          {copied ? <Check className="size-3" aria-hidden /> : <Copy className="size-3" aria-hidden />}
           {copied ? "Copied" : copyLabel}
         </button>
       </div>
-      <pre className="max-h-72 overflow-auto p-3 text-[11.5px] leading-relaxed text-foreground">
+      <pre className="mono max-h-72 overflow-auto p-4 text-[11.5px] leading-relaxed text-foreground">
         <code>{content}</code>
       </pre>
     </div>
@@ -201,9 +197,5 @@ export function CodeBlock({
 }
 
 export function NotCollected({ reason }: { reason?: string | undefined }) {
-  return (
-    <span className="text-xs italic text-muted-foreground">
-      not collected{reason ? ` — ${reason}` : ""}
-    </span>
-  );
+  return <span className="mono text-xs italic text-muted-foreground">not collected{reason ? ` — ${reason}` : ""}</span>;
 }
