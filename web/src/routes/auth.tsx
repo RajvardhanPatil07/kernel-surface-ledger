@@ -124,33 +124,6 @@ function AuthPage() {
         </button>
       </form>
 
-      <div className="mt-6 border-t border-border pt-6">
-        <button
-          type="button"
-          disabled={busy}
-          onClick={async () => {
-            setBusy(true);
-            setError(null);
-            const { error: oauthError } = await supabase.auth.signInWithOAuth({
-              provider: "google",
-              options: { redirectTo: window.location.origin },
-            });
-            if (oauthError) {
-              setBusy(false);
-              setError(oauthError.message ?? "Google sign-in failed");
-              return;
-            }
-            // Supabase redirects to the provider; nothing else to do here.
-          }}
-          className="w-full border border-border bg-surface px-3 py-2 text-sm text-foreground transition-colors hover:border-amber-dim hover:text-amber disabled:opacity-50"
-        >
-          Continue with Google
-        </button>
-        <p className="mt-2 text-[11px] text-muted-foreground">
-          Fastest route for a reviewer — no confirmation email in the way.
-        </p>
-      </div>
-
       <button
         type="button"
         onClick={() => {
