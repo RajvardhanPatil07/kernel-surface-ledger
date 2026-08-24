@@ -4,8 +4,6 @@
 
 [Open the live dashboard](https://kernel-surface-ledger.vercel.app/) · [Judge guide](docs/DEMO_RUNBOOK.md) · [Prior-art comparison](docs/PRIOR_ART.md) · [Deployment](docs/DEPLOY_VERCEL.md)
 
-![Kernel Surface Ledger dashboard](docs/demo/demo.gif)
-
 ## The idea in 60 seconds
 
 Most kernel hardening tools return a long inventory: configuration flags, loaded modules, and possible weaknesses. That is useful, but it leaves an operator with the hard question: **what is this host actually paying for, and what can be safely changed?**
