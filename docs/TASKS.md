@@ -1,4 +1,6 @@
-# Implementation plan
+# Historical implementation plan
+
+> All phases below are complete. This document preserves the development checklist; it is not the current product/deployment specification. For the direct-use Vercel dashboard and judge path, start with [`README.md`](../README.md) and [`docs/DEPLOY_VERCEL.md`](DEPLOY_VERCEL.md).
 
 One task per session. Paste `report.schema.json` and `AGENTS.md` alongside each
 task. Every task ends by running its own output.

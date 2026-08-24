@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-delegated → Vite + React + TypeScript + Tailwind, static build deployed to GitHub Pages (per docs/TASKS.md Task 4, confirmed by owner 2026-08-23). Zero backend; report.json is data, not a service.
+TanStack Start + React + TypeScript + Tailwind, deployed as a direct-use Vercel application. The dashboard renders a local `report.json`; its optional server-side OpenRouter call powers live narration and Q&A. It has no account, database, or stored scan history.
 
 ## Users
 
@@ -25,15 +25,15 @@ Every existing tool tells you *what* kernel surface is exposed — per-applicati
 
 ## Operating Context
 
-Evaluation settings: judges open a GitHub Pages URL or clone the repo and run it offline against bundled fixtures; drag-and-drop accepts any report.json. Terminal/hostile-environment reading conditions are normal (dark rooms, projectors). All scored output is deterministic; the LLM layer only narrates and never influences scores.
+Evaluation settings: judges open the Vercel URL or clone the repository and run the deterministic pipeline against bundled fixtures; drag-and-drop accepts any `report.json`. Terminal/hostile-environment reading conditions are normal (dark rooms, projectors). All scored output is deterministic; the model layer only narrates and never influences scores.
 
 ## Capabilities and Constraints
 
 - Renders the frozen `report.schema.json` contract; TS types are generated from it (schema is single source of truth).
-- Must render with zero required network calls (bundled demo fixture); optional same-origin fetch of the latest Actions-produced scan must degrade silently to the bundle.
+- Must render the bundled demo fixture with zero required network calls; the file picker and drag-and-drop accept any schema-valid report.
 - Drag-and-drop + file-picker ingestion of arbitrary schema-valid reports must never show a broken state.
 - Determinism is part of the product story: identical reports render identically.
-- Static hosting only: no server, no cookies, no analytics.
+- No account, cookies, analytics, database, or stored user reports. The only optional server operation is a same-origin model request whose key remains on Vercel.
 
 ## Brand Commitments
 
@@ -41,9 +41,9 @@ Pinned visual world (docs/TASKS.md): dark terminal aesthetic — JetBrains Mono,
 
 ## Evidence on Hand
 
-- `fixtures/demo.json`: full schema-valid demo report (5 workloads, 22 elements, 5-step plan) — real rendered content, synthetic host.
+- `fixtures/demo.json`: full schema-valid demo report (5 workloads, 22 elements, 5-step plan) — the reproducible rendered default, from a synthetic host.
 - `fixtures/raw-demo.json`: the evidence snapshot behind it, committed for provenance.
-- README.md pitch table showing the ledger/orphaned narrative shape.
+- `data/reports/report.json`: a separately committed scheduled Linux-runner scan, retained as real-host evidence rather than silently mixed into the demo.
 
 ## Product Principles
 

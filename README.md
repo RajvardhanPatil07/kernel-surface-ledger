@@ -1,144 +1,138 @@
 # Kernel Surface Ledger (`ksl`)
 
-**Every existing tool tells you *what* kernel attack surface is exposed. None tell you *who* is responsible for it.**
+**Kernel attack-surface analysis that names the workload holding each risk open, identifies reachable surface nobody used, and produces a reversible hardening plan.**
 
-`ksl` treats Linux kernel attack surface as an **accountability problem**. It builds a blame graph across every live workload on the host, attributes each dangerous piece of shared kernel surface to the process keeping it open, identifies surface that *nothing* touches, and computes the minimal set of changes that kills the most reachable CVE paths per unit of breakage risk.
+[Open the live dashboard](https://kernel-surface-ledger.vercel.app/) · [Judge guide](docs/DEMO_RUNBOOK.md) · [Prior-art comparison](docs/PRIOR_ART.md) · [Deployment](docs/DEPLOY_VERCEL.md)
 
-![ksl in 15 seconds: walk the attribution ledger, orphaned surface, reachability gates and hardening plan — then drop a real runner scan and regression watch diffs the two hosts](docs/demo/demo.gif)
+![Kernel Surface Ledger dashboard](docs/demo/demo.gif)
 
-```
-SURFACE DEBT LEDGER                              debt   sole-owner   reachable CVEs
----------------------------------------------------------------------------------
-dockerd        userns, io_uring, keyctl, autoload  21.0      yes             41
-libvirtd       /dev/kvm, module autoload           10.8      yes             12
-nginx          io_uring                             4.5       no              6
-sshd           keyctl                               3.3       no              4
----------------------------------------------------------------------------------
-ORPHANED       userfaultfd, perf_event_open,        58.0       -             23
-               dccp, rds, tipc, n_hdlc,
-               bluetooth, firewire, cramfs
-               <- reachable by any local user, touched by NOTHING
-```
+## The idea in 60 seconds
 
-That last row is the point. Fifty-eight weighted units of unprivileged-reachable kernel surface, on a normal server, that no running workload uses. Removing it is provably zero-impact - nothing touches it.
+Most kernel hardening tools return a long inventory: configuration flags, loaded modules, and possible weaknesses. That is useful, but it leaves an operator with the hard question: **what is this host actually paying for, and what can be safely changed?**
 
-## Verified on a real host
+`ksl` turns that inventory into a decision record:
 
-The demo fixture is synthetic by design; the numbers below are not. They come from the scheduled CI scan of a **stock Ubuntu 24.04 GitHub Actions runner** (kernel 6.17.0-1022-azure) — committed to this repo as [`data/reports/report.json`](data/reports/report.json) and rendered at the [live dashboard](https://rajvardhanpatil07.github.io/kernel-surface-ledger/):
+1. It observes kernel-facing surface and live workloads with a strictly read-only collector.
+2. It separates surface that is merely present from surface an unprivileged user can reach, then from surface observed in use.
+3. It attributes reachable surface to the workloads that keep it open, including shared responsibility.
+4. It finds *orphaned surface*: removable, unprivileged-reachable surface with no observed user during the trace window.
+5. It ranks reversible mitigations by newly neutralized CVE mass versus curated breakage cost.
 
-| Finding on the real host | Value |
+The result is a **Surface Debt Ledger** instead of another checklist: who owns the exposure, what is shared, what has no observed owner, and what to change first.
+
+## What a judge can verify
+
+| Claim | Evidence in this repository |
 | --- | --- |
-| Reachable surface | 61.5 of 149 weighted units |
-| Reachable CVE paths | **14 → 6** once the 5-step plan applies (8 killed) |
-| Orphaned surface | 28.0 weighted units · 7 neutralizable CVEs |
-| Notable orphans | `/dev/kvm` (mode 0660, usable by non-root), `tipc` + 4 legacy filesystem modules autoloadable, unprivileged user namespaces open |
-| Top of the plan | seccomp `io_uring_setup` (3 CVEs, breakage: none), batched sysctl fragment (5 CVEs) |
+| A report is structurally trustworthy | [`report.schema.json`](report.schema.json) is the frozen contract; [`scripts/check_contract.py`](scripts/check_contract.py) validates it. |
+| Scores are reproducible | [`tests/test_report.py`](tests/test_report.py) asserts byte-identical reports from the same raw snapshot. |
+| AI cannot influence security numbers | [`tests/test_explain.py`](tests/test_explain.py) verifies the numeric output is unchanged with and without narration. |
+| The collector is safe to run | [`collector/`](collector) only reads host interfaces, records inaccessible sources in `meta.skipped`, and never applies hardening. |
+| The plan is actionable | Every plan step has a generated artifact, breakage note, detection command, and revert. |
+| The product is usable now | The [live dashboard](https://kernel-surface-ledger.vercel.app/) works directly—no account, database, or sign-in required. |
 
-Nothing on that machine was staged for the tool to find. Reproduce it anywhere: trigger the `collect` workflow from the Actions tab, or run `python ksl.py scan` on any Linux box and drop the resulting `report.json` onto the dashboard.
+## Evidence, not screenshots
 
-## How this differs from prior work
+The default dashboard uses the schema-valid bundled demo fixture so that every visitor gets the same reproducible walkthrough:
 
-| Existing approach | Examples | What it misses |
+| Bundled demo (`fixtures/demo.json`) | Result |
+| --- | --- |
+| Reachable surface weight | **106.0 → 43.5** after the ranked plan |
+| Reachable CVEs | **19 → 9** |
+| Orphaned surface | **52.0** weighted units; **7** neutralizable CVEs |
+| Scope | 5 workloads, 22 surface elements, 5 plan steps |
+
+The scheduled Linux-runner scan is committed separately as [`data/reports/report.json`](data/reports/report.json), preserving a recorded real-host artifact rather than silently blending it into the demo. Its current snapshot records **61.5** reachable weighted units, **14 → 6** reachable CVEs, and **28.0** orphaned weighted units.
+
+## Why this is different
+
+| Approach | Useful for | What `ksl` adds |
 | --- | --- | --- |
-| Per-application policies | Confine, Chestnut, OCI seccomp hooks | one container whitelisted in isolation |
-| Whole-kernel aggregate | kernel-hardening-checker, Kurmus et al. | ~180 unranked findings, nobody held responsible |
-| Debloat-and-rebuild | Hacksaw, KASR, FACE-CHANGE | not a live host-assessment tool |
+| Kernel configuration checkers | Finding deviations from recommended settings | Runtime reachability, workload ownership, and a ranked action plan |
+| Per-application seccomp generators | Reducing one process or container’s syscall surface | A host-wide view of shared kernel surface and its marginal owners |
+| Kernel debloating systems | Producing tailored kernels | Live, read-only assessment without rebuilding or changing the kernel |
 
-No prior tool attributes *shared* surface across concurrently running workloads, computes *host-wide* orphaned surface, or emits a *breakage-costed* counterfactual plan. That intersection is the contribution; the full survey with citations lives in [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md).
+The full, sourced comparison is in [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md). The contribution is the intersection of three capabilities: **attribution**, **orphaned-surface detection**, and **breakage-costed counterfactual planning**.
 
-## From one host to a fleet
+## The model: useful, bounded, never in charge
 
-Scaling out is a reduce, not a rearchitecture. `report.schema.json` is a frozen contract, so every host emits a self-contained, schema-valid document with no server-side state. Running the same read-only collector on 500 hosts (via SSH, a tiny agent, or a CI job — the scheduled `collect` workflow already is one) yields 500 comparable documents; aggregation is then a plain map-reduce: sum the weights, union the CVE sets, merge ledgers keyed by workload id. **That reduce is already written** — `scripts/fleet_rollup.py` takes N reports and emits the per-host table plus the fleet-wide orphaned-surface list ("orphaned on k/N hosts"). The properties that make single-host output trustworthy — determinism, sorted collections, byte-identical reruns over the same snapshot — are exactly the properties that make cross-host numbers well-defined and comparable. Fleet roll-up views are a rendering problem deliberately deferred, not missing architecture.
+The deterministic engine owns every score, gate, weight, CVE count, orphan classification, and plan order. Human-curated inputs live in [`data/weights.yaml`](data/weights.yaml) and [`data/cve-map.json`](data/cve-map.json); the code does not invent them.
 
-## The three contributions
+The optional model layer may only:
 
-1. **Attribution.** Prior work is either per-application (Confine, Chestnut, seccomp generators - one container, one whitelist) or whole-kernel aggregate (Kurmus, kernel-hardening-checker - one global score). Neither models the real situation: many concurrent workloads sharing one kernel, where surface is a *jointly held liability*. `ksl` computes per-workload marginal contribution over a bipartite blame graph.
+- explain why a workload holds a surface element;
+- predict possible breakage and detection steps; and
+- render reviewable hardening artifacts.
 
-2. **Orphaned surface.** Surface that is present, reachable by an unprivileged local user, and used by no live workload. Free hardening with zero functional risk.
+It cannot select a mitigation, modify a score, or change ordering. `--no-explain` keeps the numeric result identical. The hosted dashboard also offers direct report Q&A, grounded only in the report currently loaded in the browser; its model key stays server-side.
 
-3. **Counterfactual planning.** Hardening as weighted set cover: the *k* changes that neutralize maximum reachable CVE mass per unit of estimated breakage. Not 184 unranked findings - three ranked ones, each with a breakage prediction, a detection command, and a revert command.
+## Quick start
 
-## Reachability, not mere presence
-
-A CVE in `dccp` is irrelevant if `dccp` cannot be loaded. A CVE in `io_uring` reachable by any local user is critical. Every element passes a three-tier gate:
-
-| Tier | Question |
-| --- | --- |
-| `present` | Compiled in, loaded, or loadable via module autoload? |
-| `reachable_unpriv` | Reachable by an unprivileged local user, given sysctl gates, LSM/lockdown state, and device node modes? |
-| `used` | Actually invoked by any live workload during the observation window? |
-
-Module autoload matters enormously here: it turns "not loaded" into "one `socket()` call away". Most audits miss this.
-
-## Where the AI is - and is not
-
-The scoring engine is fully deterministic. The LLM does three things it is genuinely better at than a rule table:
-
-- **Causal narration** of each blame edge - why this workload needs this surface, what primitive an attacker gains, what the concrete alternative is.
-- **Artifact synthesis** - real applicable files: `modprobe.d` blacklists, per-service seccomp-BPF JSON, systemd hardening drop-ins, sysctl fragments.
-- **Breakage prediction** - what could break, how to detect it, how to revert it.
+### Reproduce the deterministic demo
 
 ```bash
-python ksl.py scan --raw fixtures/raw-demo.json --no-explain   # skips every LLM call
+git clone https://github.com/RajvardhanPatil07/kernel-surface-ledger.git
+cd kernel-surface-ledger
+
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+
+# Score the committed evidence snapshot—no host access or API key required.
+python ksl.py scan --raw fixtures/raw-demo.json --no-explain -o report.json
+python ksl.py check report.json
+
+# Run the deterministic engine and collector test suite.
+python -m unittest discover -s tests -v
 ```
 
-Produces **byte-identical scored output**. The AI explains and generates. It never decides. This is enforced by a test.
-
-## Usage
+### Scan a Linux host
 
 ```bash
-# full pipeline on the live host (read-only; degrades gracefully as non-root)
-python ksl.py scan -o report.json --save-raw raw.json
-
-# offline demo: re-score the committed snapshot, no network, no API key
-python ksl.py scan --raw fixtures/raw-demo.json -o report.json
-
-# skip every LLM call - numeric output is byte-identical
-python ksl.py scan --raw fixtures/raw-demo.json --no-explain
-
-# validate any report against the frozen schema contract
+# Read-only collection. Save the raw evidence as well as the scored report.
+python ksl.py scan --save-raw raw.json -o report.json
 python ksl.py check report.json
 ```
 
-The static dashboard (`web/`) loads the latest runner-generated report, falls back to a bundled demo scan, and accepts any `report.json` via drag-and-drop.
-
-## AI layer configuration
-
-Any OpenAI-compatible chat endpoint works. Configuration comes from
-environment variables or a gitignored `.env` (see `.env.example`):
+Then drag `report.json` onto the [live dashboard](https://kernel-surface-ledger.vercel.app/) or start it locally:
 
 ```bash
-cp .env.example .env   # then fill in your key
+cd web
+npm install --legacy-peer-deps
+npm run dev
 ```
 
-| Variable | Example |
+The dashboard runs without a login. Set `OPENROUTER_API_KEY` in `web/.env` only if you want live Q&A and fresh narration; all deterministic report views work without it.
+
+## Safety and honest limits
+
+- **Read-only by design.** The collector never loads or unloads modules, changes a sysctl, or applies the generated artifacts.
+- **Evidence has a time window.** “Used” means observed during the selected trace window. A quiet nightly job can look unused at noon, so every recommendation includes detection and revert guidance.
+- **Missing access is reported.** Reads of `/proc`, `/sys`, and `/boot` degrade into partial evidence with a reason in `meta.skipped`; an unprivileged run remains useful instead of crashing.
+- **No tracer is not false certainty.** When syscall tracing is unavailable, syscall surface is not labeled orphaned merely because no usage was observed.
+- **Artifacts are for human review.** `ksl` produces candidate hardening files and commands; an operator decides whether to apply them.
+
+## Repository guide
+
+| Path | Purpose |
 | --- | --- |
-| `KSL_API_BASE` | `https://openrouter.ai/api/v1` |
-| `KSL_API_KEY` | your key (never committed) |
-| `KSL_MODEL` | `nvidia/nemotron-3-super-120b-a12b:free` |
+| [`collector/`](collector) | Read-only Linux evidence collection: configuration, modules, processes, device nodes, sysctls, and syscall-trace adapters. |
+| [`engine/`](engine) | Deterministic reachability, attribution, CVE accounting, and greedy set-cover planning. |
+| [`artifacts/`](artifacts) | Deterministic templates for reviewable hardening artifacts. |
+| [`explain/`](explain) | Optional constrained narration with cache and deterministic fallback. |
+| [`web/`](web) | Direct-use TanStack Start dashboard deployed on Vercel. |
+| [`fixtures/`](fixtures) | Reproducible raw and scored demo evidence. |
+| [`tests/`](tests) | Contract, determinism, CLI, reachability, attribution, planner, and degradation tests. |
+| [`scripts/fleet_rollup.py`](scripts/fleet_rollup.py) | Schema-preserving aggregation of multiple host reports. |
 
-Every LLM response is cached to `explain/cache/<sha256(prompt)>.json`, and the
-cache is committed. A demo run therefore needs **no network and no API key**: it
-replays the exact narration in `docs/demo/report-explained.json`. On any error,
-timeout, or missing key the pipeline silently keeps its deterministic template
-content - numeric output is byte-identical either way.
+## Judge path
 
-## Tests
+1. Open the [dashboard](https://kernel-surface-ledger.vercel.app/).
+2. Start with **Ask this report**, then expand a ledger workload to see what holds the surface open.
+3. Inspect **Orphaned surface** and the **Hardening plan**; each plan card makes risk, verification, and rollback visible together.
+4. Drop your own schema-valid `report.json` to replace the bundled evidence.
+5. Use [`docs/DEMO_RUNBOOK.md`](docs/DEMO_RUNBOOK.md) for the 60-second narration and [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md) for the novelty argument.
 
-```bash
-python -m unittest discover tests
-```
+## License
 
-Covers schema validity, byte-identical determinism, the LLM-independence invariant, reachability gates, attribution math, set-cover planning, and the CLI.
-
-## Safety
-
-The collector is **strictly read-only**. It never loads or unloads a module, never writes outside its output path, and degrades gracefully to a partial report when run as a non-root user. Hardening artifacts are *generated for review*, never auto-applied.
-
-## Status
-
-All five phases implemented: read-only collector (kconfig, modules with autoload, processes, sysctls, devnodes, three-backend syscall tracing), deterministic engine (reachability gates, blame-graph attribution, greedy set-cover planner), explain layer with disk-cached LLM narration and deterministic fallback, unified `ksl` CLI, and the static dashboard with scheduled runner scans deployed via GitHub Pages. See [`docs/TASKS.md`](docs/TASKS.md) for the plan and [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md) for how this differs from existing work.
-
-## Licensing note
-
-This project is MIT licensed and shares no code with GPL tooling. `data/weights.yaml` is derived independently from the [KSPP recommended settings](https://kspp.github.io/Recommended_Settings), kernel documentation, and the [kernel.org CVE feed](https://git.kernel.org/pub/scm/linux/security/vulns.git). If you later choose to vendor check tables from [`kernel-hardening-checker`](https://github.com/a13xp0p0v/kernel-hardening-checker) (GPL-3.0) rather than shell out to it, this repository must be relicensed GPL-3.0.
+MIT. See [`LICENSE`](LICENSE).
