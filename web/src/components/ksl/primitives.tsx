@@ -129,7 +129,11 @@ export function BoolGlyph({ value, label }: { value: boolean; label: string }) {
         value ? "text-amber" : "text-muted-foreground",
       )}
     >
-      {value ? <Check className="size-3.5" aria-hidden /> : <Minus className="size-3.5" aria-hidden />}
+      {value ? (
+        <Check className="size-3.5" aria-hidden />
+      ) : (
+        <Minus className="size-3.5" aria-hidden />
+      )}
       <span className="sr-only">
         {label}: {value ? "yes" : "no"}
       </span>
@@ -181,7 +185,11 @@ export function CodeBlock({
           onClick={copy}
           className="inline-flex shrink-0 items-center gap-1 border border-border px-1.5 py-0.5 text-[11px] text-muted-foreground transition-colors hover:border-amber-dim hover:text-amber"
         >
-          {copied ? <Check className="size-3" aria-hidden /> : <Copy className="size-3" aria-hidden />}
+          {copied ? (
+            <Check className="size-3" aria-hidden />
+          ) : (
+            <Copy className="size-3" aria-hidden />
+          )}
           {copied ? "Copied" : copyLabel}
         </button>
       </div>

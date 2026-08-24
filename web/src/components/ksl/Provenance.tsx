@@ -41,7 +41,9 @@ export function Provenance({ report }: { report: KslReport }) {
         <div className="mt-3">
           <CodeBlock
             path="verify determinism"
-            content={"python ksl.py scan --raw fixtures/raw-demo.json --no-explain\npython ksl.py check report.json"}
+            content={
+              "python ksl.py scan --raw fixtures/raw-demo.json --no-explain\npython ksl.py check report.json"
+            }
           />
         </div>
         <p className="mt-3 text-[11px] leading-snug text-muted-foreground">

@@ -30,7 +30,9 @@ export function OrphanedGrid({ report }: { report: KslReport }) {
           <span className="tnum text-3xl font-bold text-orphan">
             {report.orphaned.cves_neutralizable}
           </span>
-          <span className="ml-2 text-xs text-muted-foreground">CVEs neutralizable at zero cost</span>
+          <span className="ml-2 text-xs text-muted-foreground">
+            CVEs neutralizable at zero cost
+          </span>
         </p>
       </div>
 
@@ -39,9 +41,7 @@ export function OrphanedGrid({ report }: { report: KslReport }) {
           <div key={id} className="border border-border bg-surface p-3">
             <div className="flex items-start justify-between gap-2">
               <p className="text-sm text-foreground">{el?.name ?? id}</p>
-              <span className="tnum shrink-0 text-sm text-orphan">
-                {el ? fmt(el.weight) : "—"}
-              </span>
+              <span className="tnum shrink-0 text-sm text-orphan">{el ? fmt(el.weight) : "—"}</span>
             </div>
             <p className="mt-1 font-mono text-[11px] text-muted-foreground">{id}</p>
             <div className="mt-2 flex flex-wrap gap-1">

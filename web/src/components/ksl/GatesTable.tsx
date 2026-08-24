@@ -65,10 +65,7 @@ export function GatesTable({ report }: { report: KslReport }) {
     query: "",
   });
 
-  const kinds = useMemo(
-    () => uniqueSorted(report.surface_elements.map((e) => e.kind)),
-    [report],
-  );
+  const kinds = useMemo(() => uniqueSorted(report.surface_elements.map((e) => e.kind)), [report]);
   const subsystems = useMemo(
     () => uniqueSorted(report.surface_elements.map((e) => e.subsystem)),
     [report],

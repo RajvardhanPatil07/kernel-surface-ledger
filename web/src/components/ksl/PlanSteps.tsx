@@ -1,12 +1,16 @@
 import { RotateCcw, Search, TerminalSquare } from "lucide-react";
 import { useMemo } from "react";
 import { Chip, CodeBlock, RiskBadge } from "./primitives";
+import { NarrateBlock } from "./NarrateBlock";
+import { CheckThisPanel } from "./CheckThisPanel";
 import { cumulativePlan, fmt } from "@/lib/ksl-report";
+import { groundingContext } from "@/lib/ksl-summary";
 import type { KslReport } from "@/lib/ksl-types";
 
 export function PlanSteps({ report }: { report: KslReport }) {
   const steps = useMemo(() => [...report.plan].sort((a, b) => a.step - b.step), [report.plan]);
   const cumulative = useMemo(() => cumulativePlan(report), [report]);
+  const grounding = useMemo(() => groundingContext(report), [report]);
   const totalKilled = cumulative.at(-1)?.cumulative ?? 0;
 
   if (steps.length === 0) {
@@ -84,6 +88,13 @@ export function PlanSteps({ report }: { report: KslReport }) {
                   <p className="mt-1 text-[13px] leading-relaxed text-foreground">
                     {s.breakage_note ?? "No breakage note in this report."}
                   </p>
+                  <NarrateBlock
+                    context={grounding}
+                    targetKind="plan_step"
+                    targetId={String(s.step)}
+                    targetLabel={s.action}
+                    label="Predict breakage for this host"
+                  />
                 </div>
                 {s.detection ? (
                   <div>
@@ -99,6 +110,7 @@ export function PlanSteps({ report }: { report: KslReport }) {
                   </p>
                   <CodeBlock content={s.revert} path="revert" copyLabel="Copy" />
                 </div>
+                <CheckThisPanel report={report} step={s} />
               </div>
 
               <div>

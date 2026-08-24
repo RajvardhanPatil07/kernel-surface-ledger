@@ -1,9 +1,4 @@
-import type {
-  KslLedgerRow,
-  KslReport,
-  KslSurfaceElement,
-  KslWorkload,
-} from "./ksl-types";
+import type { KslLedgerRow, KslReport, KslSurfaceElement, KslWorkload } from "./ksl-types";
 
 /** Shape validation against the frozen report contract. Pure, no throw. */
 export function validateReport(
@@ -77,11 +72,45 @@ export function workloadIndex(report: KslReport): Map<string, KslWorkload> {
   return new Map(report.workloads.map((w) => [w.id, w]));
 }
 
+/**
+ * Plan steps name their targets the way an operator would type them
+ * ("bluetooth", "cramfs", "kernel.dmesg_restrict=1"), not always as element
+ * ids. Resolve one back to the element it removes so the ledger, the impact
+ * graph and the check panel all agree on what a step touches.
+ */
+export function resolveTarget(report: KslReport, target: string): KslSurfaceElement | undefined {
+  const raw = target.trim();
+  const bare = raw.split("=")[0]!.trim();
+  const candidates = [raw, bare];
+
+  for (const el of report.surface_elements) {
+    if (candidates.includes(el.id)) return el;
+  }
+  for (const el of report.surface_elements) {
+    if (candidates.includes(el.name)) return el;
+    // Bundled modules list their members: "cramfs / freevxfs / jffs2 / …".
+    const members = el.name.split("/").map((p) => p.trim());
+    if (members.some((m) => candidates.includes(m))) return el;
+  }
+  // Prefixed ids: a target "bluetooth" is element "mod.bluetooth".
+  for (const el of report.surface_elements) {
+    if (candidates.some((c) => el.id.endsWith(`.${c}`))) return el;
+  }
+  // Last resort: the gate reason enumerates autoloadable module names.
+  for (const el of report.surface_elements) {
+    const reason = el.gate_reason ?? "";
+    if (
+      bare.length > 2 &&
+      new RegExp(`\\b${bare.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(reason)
+    ) {
+      return el;
+    }
+  }
+  return undefined;
+}
+
 export type LedgerSortKey =
-  | "workload"
-  | "surface_debt"
-  | "marginal_contribution"
-  | "reachable_cves";
+  "workload" | "surface_debt" | "marginal_contribution" | "reachable_cves";
 
 export function sortLedger(
   rows: KslLedgerRow[],
@@ -107,12 +136,7 @@ export function isSoleOwner(row: KslLedgerRow): boolean {
   return row.sole_owner_elements.length > 0;
 }
 
-export type TierFilter =
-  | "all"
-  | "reachable_unused"
-  | "reachable_used"
-  | "present_gated"
-  | "absent";
+export type TierFilter = "all" | "reachable_unused" | "reachable_used" | "present_gated" | "absent";
 
 export function tierOf(el: KslSurfaceElement): TierFilter {
   if (!el.present) return "absent";
@@ -172,5 +196,8 @@ export function fmtPercent(ratio: number): string {
 export function fmtCollectedAt(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
-  return d.toISOString().replace("T", " ").replace(/\.\d+Z$/, "Z");
+  return d
+    .toISOString()
+    .replace("T", " ")
+    .replace(/\.\d+Z$/, "Z");
 }

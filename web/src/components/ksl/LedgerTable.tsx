@@ -1,14 +1,10 @@
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 import { Chip, WeightBar } from "./primitives";
+import { NarrateBlock } from "./NarrateBlock";
 import { cn } from "@/lib/utils";
-import {
-  elementIndex,
-  fmt,
-  sortLedger,
-  workloadIndex,
-  type LedgerSortKey,
-} from "@/lib/ksl-report";
+import { elementIndex, fmt, sortLedger, workloadIndex, type LedgerSortKey } from "@/lib/ksl-report";
+import { groundingContext } from "@/lib/ksl-summary";
 import type { KslReport } from "@/lib/ksl-types";
 
 const COLUMNS: { key: LedgerSortKey; label: string; numeric?: boolean }[] = [
@@ -24,6 +20,8 @@ export function LedgerTable({ report }: { report: KslReport }) {
   const [open, setOpen] = useState<Record<string, boolean>>({});
 
   const workloads = useMemo(() => workloadIndex(report), [report]);
+  const grounding = useMemo(() => groundingContext(report), [report]);
+
   const elements = useMemo(() => elementIndex(report), [report]);
   const rows = useMemo(
     () => sortLedger(report.ledger, workloads, sortKey, dir),
@@ -99,9 +97,7 @@ export function LedgerTable({ report }: { report: KslReport }) {
             const detailId = `ledger-detail-${row.workload_id}`;
             return (
               <Fragment key={row.workload_id}>
-                <tr
-                  className="border-b border-border align-top transition-colors hover:bg-surface"
-                >
+                <tr className="border-b border-border align-top transition-colors hover:bg-surface">
                   <td className="px-2 py-2">
                     <button
                       type="button"
@@ -128,15 +124,17 @@ export function LedgerTable({ report }: { report: KslReport }) {
                       <span className="ml-2 text-xs text-muted-foreground">{wl.unit}</span>
                     ) : null}
                     <div className="mt-1 flex flex-wrap gap-1">
-                      {[...row.sole_owner_elements, ...row.shared_elements].slice(0, 4).map((id) => (
-                        <Chip
-                          key={id}
-                          title={id}
-                          tone={row.sole_owner_elements.includes(id) ? "amber" : "neutral"}
-                        >
-                          {elName(id)}
-                        </Chip>
-                      ))}
+                      {[...row.sole_owner_elements, ...row.shared_elements]
+                        .slice(0, 4)
+                        .map((id) => (
+                          <Chip
+                            key={id}
+                            title={id}
+                            tone={row.sole_owner_elements.includes(id) ? "amber" : "neutral"}
+                          >
+                            {elName(id)}
+                          </Chip>
+                        ))}
                       {row.sole_owner_elements.length + row.shared_elements.length > 4 ? (
                         <Chip>
                           +{row.sole_owner_elements.length + row.shared_elements.length - 4}
@@ -175,6 +173,13 @@ export function LedgerTable({ report }: { report: KslReport }) {
                           <p className="mt-2 whitespace-pre-line text-[13px] leading-relaxed text-foreground">
                             {row.explanation ?? "No narration in this report."}
                           </p>
+                          <NarrateBlock
+                            context={grounding}
+                            targetKind="workload"
+                            targetId={row.workload_id}
+                            targetLabel={wl?.comm ?? row.workload_id}
+                            label="Re-narrate this row live"
+                          />
                         </div>
                         <dl className="space-y-3 text-xs">
                           <div>
@@ -219,9 +224,7 @@ export function LedgerTable({ report }: { report: KslReport }) {
                           </div>
                           <div>
                             <dt className="text-muted-foreground">pids</dt>
-                            <dd className="tnum text-foreground">
-                              {wl?.pids.join(", ") ?? "—"}
-                            </dd>
+                            <dd className="tnum text-foreground">{wl?.pids.join(", ") ?? "—"}</dd>
                           </div>
                           <div>
                             <dt className="text-muted-foreground">effective caps</dt>

@@ -1,10 +1,10 @@
-import { Upload } from "lucide-react";
-import { useRef } from "react";
+import { FileDown, Upload } from "lucide-react";
+import { useRef, useState } from "react";
 import { Figure } from "./primitives";
 import { LoadErrorPanel, type LoadFailure } from "./LoadErrorPanel";
 import { fmt, fmtCollectedAt, fmtPercent } from "@/lib/ksl-report";
+import { downloadHardeningPdf } from "@/lib/ksl-pdf";
 import type { KslReport } from "@/lib/ksl-types";
-
 
 const NAV = [
   { href: "#ledger", label: "Ledger" },
@@ -36,8 +36,8 @@ export function HeaderBand({
   failure: LoadFailure | null;
   onDismissFailure: () => void;
 }) {
-
   const inputRef = useRef<HTMLInputElement>(null);
+  const [pdfState, setPdfState] = useState<"idle" | "working" | "error">("idle");
   const { meta, score } = report;
   const projected = score.projected_after_plan;
 
@@ -56,14 +56,37 @@ export function HeaderBand({
         </div>
 
         <div className="flex flex-col items-end gap-2">
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            className="inline-flex items-center gap-2 border border-border bg-surface px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-amber-dim hover:text-amber"
-          >
-            <Upload className="size-3.5" aria-hidden />
-            Load report.json
-          </button>
+          <div className="flex flex-wrap justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              className="inline-flex items-center gap-2 border border-border bg-surface px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-amber-dim hover:text-amber"
+            >
+              <Upload className="size-3.5" aria-hidden />
+              Load report.json
+            </button>
+            <button
+              type="button"
+              disabled={pdfState === "working"}
+              onClick={async () => {
+                setPdfState("working");
+                try {
+                  await downloadHardeningPdf(report, sourceLabel);
+                  setPdfState("idle");
+                } catch {
+                  setPdfState("error");
+                }
+              }}
+              className="inline-flex items-center gap-2 border border-amber-dim bg-surface px-3 py-1.5 text-xs text-amber transition-colors hover:bg-surface-raised disabled:opacity-50"
+            >
+              <FileDown className="size-3.5" aria-hidden />
+              {pdfState === "working"
+                ? "building PDF…"
+                : pdfState === "error"
+                  ? "PDF failed — retry"
+                  : "Download hardening PDF"}
+            </button>
+          </div>
           <input
             ref={inputRef}
             type="file"
@@ -86,7 +109,6 @@ export function HeaderBand({
           onRetry={() => inputRef.current?.click()}
         />
       ) : null}
-
 
       <nav
         aria-label="Report sections"
@@ -111,7 +133,13 @@ export function HeaderBand({
         <MetaItem label="trace" value={`${meta.trace_backend ?? "n/a"} / ${meta.trace_seconds}s`} />
         <MetaItem
           label="privilege"
-          value={meta.ran_as_root === undefined ? "unknown" : meta.ran_as_root ? "root" : "non-root (partial)"}
+          value={
+            meta.ran_as_root === undefined
+              ? "unknown"
+              : meta.ran_as_root
+                ? "root"
+                : "non-root (partial)"
+          }
         />
         <MetaItem label="ksl" value={meta.ksl_version} />
       </div>
