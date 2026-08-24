@@ -12,12 +12,12 @@ TanStack Start + React + TypeScript + Tailwind, deployed as a direct-use Vercel 
 
 ## Users
 
-Primary (this release): hackathon judges — security-competent but new to the project, deciding innovation/feasibility/scalability/impact within minutes, often from a shared link on a laptop.
-Secondary (post-hackathon): Linux sysadmins and security engineers assessing a real host's kernel attack surface.
+Primary: Linux system administrators and security engineers assessing a real host's kernel attack surface.
+Secondary: technically curious readers who want a clear, evidence-backed walkthrough without prior kernel-security knowledge.
 
 ## Product Purpose
 
-`ksl` treats Linux kernel attack surface as an accountability problem. The dashboard renders one deterministic report: which live workloads hold which dangerous kernel surface open (attribution), what is reachable by any local user yet used by nothing (orphaned surface = free hardening), and the minimal ranked plan that kills the most CVE mass per unit of breakage risk. Success for this release: a judge understands "who is responsible" within 60 seconds of landing and leaves trusting the numbers.
+`ksl` treats Linux kernel attack surface as an accountability problem. The dashboard renders one deterministic report: which live workloads hold which dangerous kernel surface open (attribution), what is reachable by any local user yet used by nothing (orphaned surface = free hardening), and the minimal ranked plan that kills the most CVE mass per unit of breakage risk. Success for this release: a first-time visitor understands "who is responsible" within 60 seconds and leaves trusting the numbers.
 
 ## Positioning
 
@@ -25,7 +25,7 @@ Every existing tool tells you *what* kernel surface is exposed — per-applicati
 
 ## Operating Context
 
-Evaluation settings: judges open the Vercel URL or clone the repository and run the deterministic pipeline against bundled fixtures; drag-and-drop accepts any `report.json`. Terminal/hostile-environment reading conditions are normal (dark rooms, projectors). All scored output is deterministic; the model layer only narrates and never influences scores.
+Readers can open the Vercel URL or clone the repository and run the deterministic pipeline against bundled fixtures; drag-and-drop accepts any `report.json`. Terminal/hostile-environment reading conditions are normal (dark rooms, projectors). All scored output is deterministic; the model layer only narrates and never influences scores.
 
 ## Capabilities and Constraints
 

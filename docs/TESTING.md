@@ -1,6 +1,6 @@
 # Kernel Surface Ledger dashboard — end-to-end test guide
 
-Everything below is runnable by a judge with no kernel knowledge. Each test says
+Everything below is runnable by a reader with no kernel knowledge. Each test says
 what to do, what a pass looks like, and what a failure means.
 
 ---
@@ -138,7 +138,7 @@ dashboard (tests 1-3) keeps working untouched.
 
 ---
 
-## 7. Static pages judges read
+## 7. Static pages to explore
 
 | Route           | Pass condition                                                                  |
 | --------------- | ------------------------------------------------------------------------------- |

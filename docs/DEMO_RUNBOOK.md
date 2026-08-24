@@ -2,7 +2,7 @@
 
 Rehearse this; never improvise it. Every moving part has a fallback.
 The demo must survive: no network, no API key, no root, a hostile
-projector, and a judge who asks "does it scale".
+projector, and a curious reader who asks "does it scale".
 
 ## The 60-second path
 
@@ -43,7 +43,7 @@ Narration order (matches the dashboard's top-to-bottom story):
 | No API key | Live Q&A/narration reports an unavailable provider | The collector, report, ledger, plan, PDF, and validation still work. Say: "the model narrates; it never computes" |
 | Asked to scan live on macOS | Mostly-empty report | That *is* the demo: `meta.skipped` lists every source with a reason. "It degrades honestly, never crashes." |
 | Asked to scan live on Linux w/o root | Partial report | Same answer; run it, show `skipped` entries and the report still validates |
-| Judge drops a random JSON | Inline error message | Expected behaviour: "does not match the report contract" — never a blank page |
+| Someone drops a random JSON | Inline error message | Expected behaviour: "does not match the report contract" — never a blank page |
 | Projector washes out dark UI | Low contrast | Cmd+ / Ctrl++ to 125–150%; amber-on-near-black is WCAG AA at text sizes |
 
 ## Q&A crib sheet

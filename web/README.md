@@ -1,4 +1,4 @@
-# Kernel Surface Ledger — judge-facing dashboard
+# Kernel Surface Ledger — direct-use dashboard
 
 The web dashboard for [kernel-surface-ledger](https://github.com/RajvardhanPatil07/kernel-surface-ledger):
 `ksl` treats Linux kernel attack surface as an accountability problem. This app
