@@ -2,38 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark" />
-    <meta
-      name="description"
-      content="Kernel Surface Ledger — who is responsible for your Linux kernel attack surface. Attribution, orphaned surface, three-tier reachability gates, and a breakage-costed hardening plan."
-    />
+    <meta name="description" content="Kernel Surface Ledger — who is responsible for your Linux kernel attack surface." />
     <meta property="og:title" content="Kernel Surface Ledger" />
-    <meta property="og:description" content="Every tool tells you what kernel surface is exposed. None tell you who is responsible." />
+    <meta property="og:description" content="Attribution, orphaned surface, reachability gates, and breakage-costed hardening." />
     <title>Kernel Surface Ledger — who owns your kernel attack surface</title>
   </head>
   <body>
-    <!--
-      DIRECTION CONTRACT (code-led, terminal world, five numbered sections)
-      THESIS: the page is a rendered audit finding, not a dashboard: the kernel's own
-      evidence typeset like a terminal report you can interrogate.
-      OWN-WORLD: near-black oklch ground; one amber accent carries every verdict;
-      JetBrains Mono everywhere data lives; hairline rules; flat bordered surfaces,
-      no cards, no rounded corners; tabular numerals for all figures.
-      STORY: a judge reads the four header figures (reachable weight and CVEs falling
-      to their projected values), then walks 01 attribution -> 02 orphaned surface ->
-      03 reachability gates -> 04 hardening plan -> 05 provenance, and can restate
-      attribution in one sentence on the way out.
-      FIRST VIEWPORT: title + one-line thesis, section nav, host metadata line,
-      partial-data notice when sources were skipped, and the four figures.
-      FORM: whole-page drag-and-drop for any schema-valid report.json; failures are
-      typed and recoverable; the bundled demo renders with zero network calls.
-      SEMANTIC COLOR NOTE: amber carries every verdict and risk state; cyan (orphan)
-      and green (ok) exist only as semantic states, red only for breakage-high and
-      errors — never decoration, never headline figures.
-      FINISH: unreviewed and undocumented is unfinished.
-    -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
