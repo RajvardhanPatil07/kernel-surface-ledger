@@ -2,78 +2,94 @@
 
 # Kernel Surface Ledger
 
-### `ksl` — understand who holds your kernel attack surface open
+### `ksl` — AI-assisted Linux kernel attack surface analyzer
 
-**A read-only Linux analyzer that turns kernel exposure into a clear, reversible hardening decision.**
+**Turn low-level kernel exposure into an explainable, evidence-backed hardening decision.**
 
-[![Live dashboard](https://img.shields.io/badge/live%20dashboard-Vercel-0f172a?style=flat-square&logo=vercel&logoColor=white)](https://kernel-surface-ledger.vercel.app/)
-[![Read-only collector](https://img.shields.io/badge/collector-read--only-0f766e?style=flat-square&logo=linux&logoColor=white)](#designed-for-cautious-use)
-[![Deterministic scoring](https://img.shields.io/badge/scoring-deterministic-d97706?style=flat-square)](#the-ai-boundary)
-[![MIT License](https://img.shields.io/badge/license-MIT-2563eb?style=flat-square)](LICENSE)
+[![Linux](https://img.shields.io/badge/platform-Linux-111111?style=flat-square&logo=linux&logoColor=white)](#get-started)
+[![Read-only](https://img.shields.io/badge/collector-read--only-111111?style=flat-square)](#designed-for-cautious-use)
+[![Deterministic](https://img.shields.io/badge/security--scoring-deterministic-111111?style=flat-square)](#the-ai-boundary)
+[![Live](https://img.shields.io/badge/dashboard-live-111111?style=flat-square)](https://kernel-surface-ledger.vercel.app/)
+[![MIT](https://img.shields.io/badge/license-MIT-111111?style=flat-square)](LICENSE)
 
-[Explore the dashboard](https://kernel-surface-ledger.vercel.app/) &nbsp;·&nbsp; [Read the method](docs/PRIOR_ART.md) &nbsp;·&nbsp; [Run a demo](#get-started) &nbsp;·&nbsp; [Deploy your own](docs/DEPLOY_VERCEL.md)
+**Rajvardhan Patil** · AI-assisted Kernel Attack Surface Analyzer · Linux-based hackathon build
+
+[Explore the dashboard](https://kernel-surface-ledger.vercel.app/) · [Run the demo](#reproduce-the-deterministic-demo) · [Read the method](docs/PRIOR_ART.md) · [Deploy your own](docs/DEPLOY_VERCEL.md)
 
 </div>
 
-> **A kernel hardening report should end in a decision—not a longer checklist.**
+> **The goal is not another kernel checklist. The goal is a defensible answer to one question: _what should we review first, and why?_**
 
-Most kernel hardening tools identify settings and possible weaknesses. `ksl` takes the next step: it shows **which live workloads keep reachable kernel surface open**, **what is reachable but has no observed user**, and **which reversible changes remove the most risk for the least expected disruption**.
+## 01 / What it does
 
-## From exposure to a decision
+Kernel Surface Ledger (`ksl`) is a **read-only Linux analyzer** that collects evidence about kernel configuration, loaded modules, processes, device nodes, sysctls, and optional syscall traces. It then turns that evidence into a deterministic report covering:
 
-| Observe | Attribute | Act |
-| --- | --- | --- |
-| Read kernel configuration, modules, processes, device nodes, sysctls, and optional syscall traces—without modifying the host. | Separate surface that is merely present from surface reachable by unprivileged users, then divide responsibility across the workloads that use it. | Find orphaned surface and rank reviewable mitigations with their artifact, risk, verification command, and revert. |
+- **Presence** — what kernel surface exists.
+- **Reachability** — what an unprivileged local user can actually reach.
+- **Attribution** — which live workloads keep that surface relevant.
+- **Orphans** — reachable surface with no observed owner during the trace window.
+- **Planning** — which reversible hardening steps remove the most reachable CVE mass for the least expected breakage.
+- **Explanation** — optional AI narration that explains evidence without controlling security numbers.
 
-The result is a **Surface Debt Ledger**: a compact explanation of who owns the exposure, what is shared, what has no observed owner, and what to change first.
+The result is a **Surface Debt Ledger**: not a flat findings list, but an accountable model of exposure, ownership, and change.
 
-## See the model work
+## 02 / Why this fits the problem statement
 
-The dashboard opens with a reproducible, schema-valid demo report. It is deliberately separate from the committed Linux-runner scan, so each visitor can distinguish repeatable walkthrough data from recorded host evidence.
+**Problem statement:** Develop an AI-assisted tool that automatically analyzes Linux kernel configurations, loaded kernel modules, system calls, and exposed kernel interfaces to identify potential security weaknesses, assess attack surfaces, and generate explainable kernel hardening recommendations.
 
-| Bundled demo · [`fixtures/demo.json`](fixtures/demo.json) | Result |
+| Requirement | `ksl` implementation |
 | --- | --- |
-| Reachable surface weight | **106.0 → 43.5** after the ranked plan |
+| Kernel configuration | `collector/kconfig.py` |
+| Loaded modules | `collector/modules.py` |
+| System calls | `collector/syscalls.py` with optional trace adapters |
+| Kernel interfaces | device nodes, sysctls, modules, and reachability engine |
+| Attack-surface assessment | `engine/reachability.py` + deterministic scoring |
+| Security weaknesses | CVE mapping + reachability-aware accounting |
+| Explainability | `explain/` constrained narration + grounded dashboard Q&A |
+| Hardening recommendations | `engine/setcover.py` + reviewable artifacts |
+| Linux compatibility | read-only Linux host collector + Linux-first fixtures |
+
+## 03 / The differentiator
+
+Most hardening tools stop after finding a setting or a vulnerable component. `ksl` adds three questions that make the result operational:
+
+**Who keeps it open?** Workload attribution separates shared surface from marginal responsibility.
+
+**Is anyone actually touching it?** Orphaned-surface analysis distinguishes reachable-but-unused surface from active dependencies.
+
+**What should change first?** Counterfactual planning ranks reversible mitigations by security impact versus estimated disruption.
+
+That combination makes the report easier to review with an operator, security engineer, or judge.
+
+## 04 / AI boundary
+
+The security engine is deliberately conservative.
+
+**Deterministic code owns:** scores, gates, weights, CVE counts, orphan classification, and plan order.
+
+**The model may:** explain why a workload holds a surface element, summarize observed evidence, predict possible breakage, and render reviewable hardening artifacts.
+
+**The model may not:** change numeric scores, invent security findings, select the winning mitigation, or silently reorder the hardening plan.
+
+The optional `--no-explain` path produces the same security numbers without AI narration, making the separation testable.
+
+## 05 / Demo signal
+
+The bundled dashboard opens directly on reproducible demo evidence, so a reviewer can understand the product without a Linux host, account, database, or API key.
+
+| Demo metric | Result |
+| --- | --- |
+| Reachable surface | **106.0 → 43.5** after ranked plan |
 | Reachable CVEs | **19 → 9** |
-| Orphaned surface | **52.0** weighted units · **7** neutralizable CVEs |
-| Report scope | 5 workloads · 22 surface elements · 5 plan steps |
+| Orphaned surface | **52.0** weighted units |
+| Neutralizable orphan CVEs | **7** |
+| Workloads | **5** |
+| Surface elements | **22** |
+| Hardening steps | **5** |
 
-The scheduled Linux-runner snapshot, [`data/reports/report.json`](data/reports/report.json), currently records **61.5** reachable weighted units, **14 → 6** reachable CVEs, and **28.0** orphaned weighted units.
+The dashboard also supports loading a schema-valid `report.json`, rendering the same evidence model for a real Linux host.
 
-## Built to be checked
-
-| Property | Where to verify it |
-| --- | --- |
-| The report has a stable shape | [`report.schema.json`](report.schema.json) is the frozen contract; [`scripts/check_contract.py`](scripts/check_contract.py) validates it. |
-| Scores are reproducible | [`tests/test_report.py`](tests/test_report.py) asserts byte-identical reports from the same raw snapshot. |
-| AI cannot change security numbers | [`tests/test_explain.py`](tests/test_explain.py) verifies identical numeric output with and without narration. |
-| Collection is safe to run | [`collector/`](collector) only reads host interfaces and records inaccessible sources in `meta.skipped`. |
-| Recommendations are actionable | Every plan step includes an artifact, breakage context, detection command, and revert. |
-| The product is immediately usable | The [live dashboard](https://kernel-surface-ledger.vercel.app/) works directly—no account, database, or sign-in required. |
-
-## What sets `ksl` apart
-
-| Existing approach | Strength | What `ksl` adds |
-| --- | --- | --- |
-| Kernel configuration checkers | Find deviations from recommended settings | Runtime reachability, workload ownership, and a ranked action plan |
-| Per-application seccomp generators | Reduce one process or container’s syscall surface | A host-wide view of shared surface and the workloads with marginal responsibility |
-| Kernel debloating systems | Produce tailored kernels | Live, read-only assessment without rebuilding or altering the kernel |
-
-The contribution is the combination of **workload attribution**, **orphaned-surface detection**, and **breakage-costed counterfactual planning**. Read the full sourced comparison in [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md).
-
-## The AI boundary
-
-The deterministic engine owns every score, gate, weight, CVE count, orphan classification, and plan order. Human-curated inputs live in [`data/weights.yaml`](data/weights.yaml) and [`data/cve-map.json`](data/cve-map.json); the code does not invent them.
-
-The optional model layer can:
-
-- explain why a workload holds a surface element;
-- predict possible breakage and detection steps; and
-- render reviewable hardening artifacts.
-
-It cannot select a mitigation, modify a score, or change ordering. Running `--no-explain` keeps all numeric results identical. The hosted dashboard also offers direct report Q&A, grounded only in the report currently loaded in the browser; its model key stays server-side.
-
-## Get started
+## 06 / Get started
 
 ### Reproduce the deterministic demo
 
@@ -85,23 +101,23 @@ python3 -m venv .venv
 . .venv/bin/activate
 pip install -r requirements.txt
 
-# Score the committed evidence snapshot—no host access or API key required.
+# Score committed evidence without touching the host.
 python ksl.py scan --raw fixtures/raw-demo.json --no-explain -o report.json
 python ksl.py check report.json
 
-# Run the deterministic engine and collector test suite.
+# Run the deterministic test suite.
 python -m unittest discover -s tests -v
 ```
 
 ### Scan a Linux host
 
 ```bash
-# Read-only collection. Save the raw evidence as well as the scored report.
+# Read-only host collection.
 python ksl.py scan --save-raw raw.json -o report.json
 python ksl.py check report.json
 ```
 
-Drag `report.json` onto the [live dashboard](https://kernel-surface-ledger.vercel.app/) or run it locally:
+Then load `report.json` into the [live dashboard](https://kernel-surface-ledger.vercel.app/) or run the dashboard locally:
 
 ```bash
 cd web
@@ -109,37 +125,39 @@ npm install --legacy-peer-deps
 npm run dev
 ```
 
-The dashboard runs without a login. Set `OPENROUTER_API_KEY` in `web/.env` only for live Q&A and fresh narration; all deterministic report views work without it.
+Set `OPENROUTER_API_KEY` in `web/.env` only when you want live Q&A or fresh narration. The deterministic report views do not require it.
 
-## Designed for cautious use
+## 07 / Designed for cautious use
 
-- **Read-only by design.** The collector never loads or unloads modules, changes a sysctl, or applies generated artifacts.
-- **Evidence has a time window.** “Used” means observed during the selected trace window. A quiet nightly job can look unused at noon, so every recommendation includes verification and rollback guidance.
-- **Missing access is reported.** Reads of `/proc`, `/sys`, and `/boot` degrade into partial evidence with a reason in `meta.skipped`; an unprivileged run remains useful instead of crashing.
-- **No tracer is not false certainty.** When syscall tracing is unavailable, syscall surface is not called orphaned merely because no usage was observed.
-- **Artifacts are for human review.** `ksl` produces candidate hardening files and commands; an operator decides whether to apply them.
+- **Read-only by design.** The collector never loads or unloads modules, changes sysctls, or applies hardening automatically.
+- **Evidence has a time window.** “Used” means observed during the selected trace period; a quiet service can look unused later.
+- **Missing access is explicit.** Inaccessible sources are recorded in `meta.skipped` instead of becoming silent false certainty.
+- **No tracer is not proof of absence.** Syscall surface is not called orphaned merely because a trace was unavailable.
+- **Artifacts are reviewable.** Each recommendation carries its target artifact, expected breakage, detection command, and revert path.
 
-## Explore the repository
+## 08 / Repository map
 
 | Path | Purpose |
 | --- | --- |
-| [`collector/`](collector) | Read-only Linux evidence collection: configuration, modules, processes, device nodes, sysctls, and syscall-trace adapters. |
-| [`engine/`](engine) | Deterministic reachability, attribution, CVE accounting, and greedy set-cover planning. |
-| [`artifacts/`](artifacts) | Deterministic templates for reviewable hardening artifacts. |
-| [`explain/`](explain) | Optional constrained narration with cache and deterministic fallback. |
-| [`web/`](web) | Direct-use TanStack Start dashboard deployed on Vercel. |
-| [`fixtures/`](fixtures) | Reproducible raw and scored demo evidence. |
-| [`tests/`](tests) | Contract, determinism, CLI, reachability, attribution, planner, and degradation tests. |
-| [`scripts/fleet_rollup.py`](scripts/fleet_rollup.py) | Schema-preserving aggregation of multiple host reports. |
+| `collector/` | Read-only Linux evidence collection |
+| `engine/` | Deterministic reachability, attribution, CVE accounting, and planning |
+| `artifacts/` | Reviewable hardening artifact templates |
+| `explain/` | Optional constrained AI narration |
+| `web/` | TanStack Start dashboard deployed on Vercel |
+| `fixtures/` | Reproducible demo evidence |
+| `tests/` | Contract, determinism, CLI, reachability, attribution, planner, and degradation tests |
+| `docs/` | Demo runbook, prior-art research, testing, and deployment notes |
 
-## A good first tour
+## 09 / A good judge walkthrough
 
-1. Open the [dashboard](https://kernel-surface-ledger.vercel.app/).
-2. Expand a ledger workload to see exactly what holds surface open.
-3. Compare **Orphaned surface** with the **Hardening plan**; each plan card keeps risk, verification, and rollback in one place.
-4. Drop your own schema-valid `report.json` to replace the bundled evidence.
-5. Read [`docs/DEMO_RUNBOOK.md`](docs/DEMO_RUNBOOK.md) for a concise walkthrough or [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md) for the technical context.
+1. Open the dashboard and read the top-level exposure metrics.
+2. Expand a ledger workload to see what it owns and what remains shared.
+3. Compare **Orphaned surface** with the **Hardening plan**.
+4. Open a plan step to inspect artifact, expected breakage, verification, and rollback.
+5. Open **Impact graph** to see the blast radius before applying a change.
+6. Ask the report a question and verify that the answer remains grounded in the loaded evidence.
+7. Read **Where the AI is — and is not** to see the deterministic security boundary.
 
-## License
+## 10 / License
 
-MIT. See [`LICENSE`](LICENSE).
+MIT. See [LICENSE](LICENSE).
