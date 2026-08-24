@@ -116,7 +116,7 @@ await check("claim regression: report figures verify, invented ones fail", () =>
 });
 
 // ---- 3. live app -------------------------------------------------------------
-const ROUTES = ["/", "/how-it-works", "/pipeline", "/prior-art", "/submission", "/auth"];
+const ROUTES = ["/", "/how-it-works", "/pipeline", "/prior-art", "/submission"];
 for (const route of ROUTES) {
   await check(`GET ${route} renders`, async () => {
     const res = await fetch(`${BASE}${route}`);
@@ -127,24 +127,14 @@ for (const route of ROUTES) {
   });
 }
 
-await check("protected /scans redirects anonymous visitors to /auth", async () => {
-  const res = await fetch(`${BASE}/scans`, { redirect: "manual" });
-  const html = res.status < 300 ? await res.text() : "";
-  assert(
-    res.status >= 300 || html.includes("/auth") || html.toLowerCase().includes("sign in"),
-    `anonymous visitor was served the library (status ${res.status})`,
-  );
-  return `status ${res.status} — gate present`;
-});
-
-await check("AI ask endpoint refuses anonymous callers", async () => {
+await check("AI ask endpoint accepts direct requests without a bearer token", async () => {
   const res = await fetch(`${BASE}/api/ai/ask`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question: "hi", context: "x".repeat(40) }),
+    body: JSON.stringify({ question: "hi", context: "too short" }),
   });
-  assert(res.status === 401, `expected 401, got ${res.status}`);
-  return "401 without a bearer token";
+  assert(res.status === 400, `expected public validation response 400, got ${res.status}`);
+  return "400 validation response without a bearer token";
 });
 
 // ---- summary ----------------------------------------------------------------

@@ -11,7 +11,6 @@ what to do, what a pass looks like, and what a failure means.
 | --------------------------- | ------------------------------------ | ------------------------------------ |
 | Node/Bun + `bun install`    | app deps                             | `bun --version`                      |
 | A browser                   | the whole product is a web dashboard | —                                    |
-| Cloud backend enabled       | auth, saved scans, AI notes          | sign-in page loads at `/auth`        |
 | `OPENROUTER_API_KEY` secret | live AI narration + Q&A              | AI panels answer instead of erroring |
 
 Run the app:
@@ -77,45 +76,7 @@ printf '{"hello":1}'   > /tmp/wrongshape.json
 
 ---
 
-## 4. Sign in (auth)
-
-1. Open `/auth`.
-2. Either "Continue with Google", or email + password sign-up.
-3. **Pass:** the nav shows your email and a Sign out button; `/scans` no longer
-   redirects to `/auth`.
-
----
-
-## 5. Save scans to the library (auth)
-
-1. Go to `/scans`, type a host label (e.g. `edge-01 · pre-hardening`), pick a
-   `report.json`.
-2. **Pass:** a row appears with kernel, collection time, reachable weight,
-   reachable CVEs and orphan ratio.
-3. Save a second report (e.g. a post-hardening scan of the same host).
-4. **Pass:** `delete` removes only the row you clicked, and another signed-in
-   account never sees your rows (row-level security).
-
----
-
-## 6. Before/after diff and plan follow-through (auth)
-
-1. On `/scans`, tick exactly two scans → **Compare**.
-2. **Pass:** `/scans/compare` shows what disappeared, what appeared, and the
-   delta in weight/CVEs/orphan ratio.
-3. **Pass:** the plan follow-through table marks each step of the _earlier_
-   scan's plan as one of:
-   - **landed** — the targeted element is gone or no longer reachable,
-   - **not applied** — still exactly as before,
-   - **unverifiable** — the later scan cannot see that target (honest, not a
-     green tick you can't trust).
-
-This is the anti-theatre test: a step is only "landed" when the second scan
-proves it.
-
----
-
-## 7. Live AI: ask the report (auth)
+## 4. Live AI: ask the report (direct)
 
 On `/`, in "Ask this report", click the suggested question:
 
@@ -143,7 +104,7 @@ Grounding checks worth running:
 
 ---
 
-## 8. Live AI: per-row narration and breakage prediction (auth)
+## 5. Live AI: per-row narration and breakage prediction (direct)
 
 1. In the Surface Debt Ledger, expand a workload (e.g. `dockerd`) → **Re-narrate
    this row live**.
@@ -152,11 +113,12 @@ Grounding checks worth running:
 3. In the Hardening Plan, click **Predict breakage** on a step.
 4. **Pass:** concrete services/tools named, plus one detection command.
 
-Both are persisted with the scan, so reloading keeps the narration.
+Both are generated from the currently loaded report. Reloading clears the
+temporary narration, and no report is stored remotely.
 
 ---
 
-## 9. Resilience of the free model pool
+## 6. Resilience of the free model pool
 
 The free pools sometimes answer "service temporarily overloaded" — including
 inside a 200 response and inside the token stream.
@@ -172,11 +134,11 @@ To exercise the error path, unset the key and restart:
 ```
 
 **Pass:** the panel says the model key is not configured; the deterministic
-dashboard (tests 1-6) keeps working untouched.
+dashboard (tests 1-3) keeps working untouched.
 
 ---
 
-## 10. Static pages judges read
+## 7. Static pages judges read
 
 | Route           | Pass condition                                                                  |
 | --------------- | ------------------------------------------------------------------------------- |
@@ -189,7 +151,7 @@ Each page has its own title and description (view source or check the tab).
 
 ---
 
-## 11. Automated checks
+## 8. Automated checks
 
 ```bash
 bun run lint          # eslint

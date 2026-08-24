@@ -1,29 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createClient } from "@supabase/supabase-js";
 
 /**
- * Streaming "ask the report" endpoint. Signed-in callers only: the model key
- * is server-held and this route spends it.
+ * Streaming "ask the report" endpoint. The model key is server-held.
  */
 export const Route = createFileRoute("/api/ai/ask")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-        if (!token) {
-          return new Response("Sign in to ask the report", { status: 401 });
-        }
-
-        const supabase = createClient(
-          process.env["SUPABASE_URL"]!,
-          process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["SUPABASE_ANON_KEY"]!,
-          { auth: { persistSession: false, autoRefreshToken: false } },
-        );
-        const { data: userData, error: userError } = await supabase.auth.getUser(token);
-        if (userError || !userData.user) {
-          return new Response("Your session is no longer valid — sign in again", { status: 401 });
-        }
-
         let body: { question?: unknown; context?: unknown; history?: unknown };
         try {
           body = (await request.json()) as typeof body;

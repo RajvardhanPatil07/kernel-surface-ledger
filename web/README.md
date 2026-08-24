@@ -4,13 +4,12 @@ The web dashboard for [kernel-surface-ledger](https://github.com/RajvardhanPatil
 `ksl` treats Linux kernel attack surface as an accountability problem. This app
 renders a scan's `report.json` — who holds dangerous kernel surface open,
 what nothing uses (free hardening), and the breakage-costed hardening plan —
-with accounts, saved scan history, scan comparison, and an ask-the-report AI
-panel backed by OpenRouter.
+with a direct, no-account ask-the-report AI panel backed by OpenRouter.
 
 ## Stack
 
 TanStack Start (SSR on Vercel Functions) · React 19 · Tailwind v4 ·
-Supabase (auth + Postgres + RLS) · OpenRouter (server-side only).
+OpenRouter (server-side only).
 
 ## Local development
 
@@ -19,28 +18,13 @@ npm install --legacy-peer-deps
 npm run dev          # http://localhost:8080
 ```
 
-Copy `.env.example` to `.env` and fill in your Supabase project values
-(URL + publishable key, with and without the `VITE_` prefix) and, for the
-Ask panel, `OPENROUTER_API_KEY`. Without them the demo dashboard still
-renders from the bundled fixture.
+Copy `.env.example` to `.env` and set `OPENROUTER_API_KEY` for live narration
+and Q&A. Without it, the demo dashboard still renders from the bundled fixture.
 
 ## Deploying to Vercel
 
-See **[docs/DEPLOY_VERCEL.md](docs/DEPLOY_VERCEL.md)** — repo import, every
-environment variable, the Supabase auth-redirect setup, and post-deploy
-checks.
-
-## Supabase setup
-
-Run the migration in `supabase/migrations/` against your project (SQL editor
-or `supabase db push`). It creates:
-
-- `scans` — one row per saved scan (report JSONB + extracted headline figures), RLS: owner-only
-- `ai_notes` — per-element AI narration cache, RLS: owner-only
-
-Enable the Google provider in **Authentication → Providers** and add your
-deployed URLs (and `http://localhost:8080`) under **Authentication → URL
-Configuration → Redirect URLs**.
+See **[docs/DEPLOY_VERCEL.md](docs/DEPLOY_VERCEL.md)** — repo import, the one
+environment variable, and post-deploy checks.
 
 ## Scripts
 

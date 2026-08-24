@@ -114,8 +114,7 @@ sudo ksl scan --trace-seconds 60 --no-explain --out report.json`}
 ksl validate report.json`}
           />
           <p className="text-sm leading-relaxed text-muted-foreground">
-            Then drop <code>report.json</code> onto the dashboard, or sign in and save it to the
-            scan library to diff it against the same host after hardening.
+            Then drop <code>report.json</code> onto the dashboard to inspect the host directly.
           </p>
         </div>
       </Section>

@@ -6,17 +6,8 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  // src/integrations/supabase/** is generated and must not be hand-edited.
   {
-    ignores: [
-      "dist",
-      ".output",
-      ".vercel",
-      ".wrangler",
-      ".vinxi",
-      "src/routeTree.gen.ts",
-      "src/integrations/supabase/**",
-    ],
+    ignores: ["dist", ".output", ".vercel", ".wrangler", ".vinxi", "src/routeTree.gen.ts"],
   },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],

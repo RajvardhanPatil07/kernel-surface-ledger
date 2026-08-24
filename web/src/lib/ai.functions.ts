@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export interface NarrationInput {
   /** compact grounding projection of the active report */
@@ -8,7 +7,6 @@ export interface NarrationInput {
   targetId: string;
   /** human label used in the prompt, e.g. a comm or an action */
   targetLabel: string;
-  scanId?: string | undefined;
 }
 
 /**
@@ -16,7 +14,6 @@ export interface NarrationInput {
  * Deterministic figures are never recomputed here — the model only explains.
  */
 export const generateNarration = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: NarrationInput) => {
     if (!input || typeof input.context !== "string" || input.context.length < 20) {
       throw new Error("A report context is required");
@@ -26,7 +23,7 @@ export const generateNarration = createServerFn({ method: "POST" })
     }
     return input;
   })
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data }) => {
     const { complete, DEFAULT_MODEL } = await import("@/lib/openrouter.server");
 
     const system = [
@@ -50,16 +47,6 @@ export const generateNarration = createServerFn({ method: "POST" })
       { role: "system", content: system },
       { role: "user", content: user },
     ]);
-
-    await context.supabase.from("ai_notes").insert({
-      user_id: context.userId,
-      scan_id: data.scanId ?? null,
-      target_kind: data.targetKind,
-      target_id: data.targetId,
-      prompt_kind: data.targetKind === "workload" ? "blame" : "breakage",
-      model,
-      content: text,
-    });
 
     return { text, model: model || DEFAULT_MODEL };
   });

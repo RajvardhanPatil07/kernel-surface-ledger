@@ -1,9 +1,8 @@
 # Deploying ksl to Vercel
 
-The app is a TanStack Start (SSR) app. It needs a server at runtime, because two
-things must never reach the browser: the model API key and the service-role
-database access. Vercel Functions provide that server, so the deploy is a normal
-Vercel project with no extra adapter work.
+The app is a TanStack Start (SSR) app. It needs a server at runtime because the
+model API key must never reach the browser. Vercel Functions provide that
+server, so the deploy is a normal Vercel project with no extra adapter work.
 
 ## 1. Import the repo
 
@@ -25,35 +24,18 @@ instead of the default edge target. No config change is required.
 Add these in **Project → Settings → Environment Variables** for both
 _Production_ and _Preview_:
 
-| Name                            | Value                                    | Why                                 |
-| ------------------------------- | ---------------------------------------- | ----------------------------------- |
-| `OPENROUTER_API_KEY`            | your OpenRouter key                      | server-only; powers narration + Ask |
-| `SUPABASE_URL`                  | your project URL                         | server-side reads                   |
-| `SUPABASE_PUBLISHABLE_KEY`      | publishable (anon) key                   | verifies the caller's bearer token  |
-| `SUPABASE_SERVICE_ROLE_KEY`     | service-role key (only if you use admin) | privileged writes                   |
-| `VITE_SUPABASE_URL`             | same as `SUPABASE_URL`                   | browser client                      |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | same publishable key                     | browser client                      |
-| `VITE_SUPABASE_PROJECT_ID`      | project ref                              | browser client                      |
+| Name                 | Value               | Why                                 |
+| -------------------- | ------------------- | ----------------------------------- |
+| `OPENROUTER_API_KEY` | your OpenRouter key | server-only; powers narration + Ask |
 
-Only the `VITE_`-prefixed values are exposed to the browser. Never prefix
-`OPENROUTER_API_KEY` or the service-role key with `VITE_`.
+Never prefix `OPENROUTER_API_KEY` with `VITE_`; doing so would expose it in the
+browser bundle.
 
-## 3. Auth redirect URLs
-
-In the backend's auth settings add the Vercel URLs to the allowed redirects:
-
-- `https://<your-project>.vercel.app`
-- `https://<your-project>.vercel.app/scans`
-- your custom domain, if any
-
-Without this, Google sign-in and the email confirmation link bounce back with a
-redirect error.
-
-## 4. Verify after deploy
+## 3. Verify after deploy
 
 ```bash
 curl -sI https://<your-project>.vercel.app/            # 200, HTML
-curl -s  https://<your-project>.vercel.app/api/ai/ask -X POST   # 401 (auth required — correct)
+curl -s  https://<your-project>.vercel.app/api/ai/ask -X POST   # 400 (a request body is required)
 ```
 
 Then in the browser:
@@ -61,7 +43,7 @@ Then in the browser:
 1. `/` renders the bundled demo scan with no account.
 2. Drag a `report.json` in — a bad file shows the classified error panel.
 3. **Download hardening PDF** produces the plan report.
-4. Sign in, then ask a question in **Ask this report** — the answer streams and
+4. Ask a question in **Ask this report** — the answer streams and
    the claim-audit badge appears underneath.
 
 ## Notes

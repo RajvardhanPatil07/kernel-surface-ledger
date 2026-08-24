@@ -1,6 +1,4 @@
-import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { checkClaims } from "@/lib/claim-check";
 import type { KslReport } from "@/lib/ksl-types";
 
@@ -93,20 +91,15 @@ function AnswerBody({ text, streaming }: { text: string; streaming: boolean }) {
 }
 
 /**
- * Grounded Q&A over the active report. Streams from /api/ai/ask, which is
- * signed-in only because it spends the server-held model key.
+ * Grounded Q&A over the active report. Streams from /api/ai/ask while the
+ * model key remains on the server.
  */
 export function AskPanel({ context, report }: { context: string; report: KslReport }) {
-  const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [question, setQuestion] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const logRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    void supabase.auth.getUser().then(({ data }) => setSignedIn(Boolean(data.user)));
-  }, []);
 
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
@@ -123,13 +116,9 @@ export function AskPanel({ context, report }: { context: string; report: KslRepo
     setStreaming(true);
 
     try {
-      const { data } = await supabase.auth.getSession();
-      const token = data.session?.access_token;
-      if (!token) throw new Error("Your session expired — sign in again");
-
       const res = await fetch("/api/ai/ask", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: trimmed, context, history }),
       });
 
@@ -162,23 +151,6 @@ export function AskPanel({ context, report }: { context: string; report: KslRepo
     } finally {
       setStreaming(false);
     }
-  }
-
-  if (signedIn === false) {
-    return (
-      <div className="border border-border bg-surface p-4">
-        <p className="text-sm leading-relaxed text-foreground">
-          Ask this report questions in plain English — grounded strictly in the loaded JSON, citing
-          element and workload ids, and refusing to guess where the data does not reach.
-        </p>
-        <Link
-          to="/auth"
-          className="mt-3 inline-block border border-amber-dim px-3 py-1.5 text-xs text-amber transition-colors hover:bg-surface-raised"
-        >
-          Sign in to ask →
-        </Link>
-      </div>
-    );
   }
 
   return (

@@ -1,10 +1,7 @@
-import { Link } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
 import { generateNarration } from "@/lib/ai.functions";
-import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Live narration for one target. The figures are never touched — this only
@@ -15,40 +12,19 @@ export function NarrateBlock({
   targetKind,
   targetId,
   targetLabel,
-  scanId,
   label,
 }: {
   context: string;
   targetKind: "workload" | "plan_step";
   targetId: string;
   targetLabel: string;
-  scanId?: string | undefined;
   label: string;
 }) {
   const narrate = useServerFn(generateNarration);
-  const [signedIn, setSignedIn] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    void supabase.auth.getUser().then(({ data }) => setSignedIn(Boolean(data.user)));
-  }, []);
 
   const mutation = useMutation({
-    mutationFn: () =>
-      narrate({
-        data: { context, targetKind, targetId, targetLabel, ...(scanId ? { scanId } : {}) },
-      }),
+    mutationFn: () => narrate({ data: { context, targetKind, targetId, targetLabel } }),
   });
-
-  if (signedIn === false) {
-    return (
-      <p className="mt-3 border border-border bg-surface-raised px-3 py-2 text-[11px] text-muted-foreground">
-        <Link to="/auth" className="text-amber underline">
-          Sign in
-        </Link>{" "}
-        to run the narration layer live against this report.
-      </p>
-    );
-  }
 
   return (
     <div className="mt-3">
