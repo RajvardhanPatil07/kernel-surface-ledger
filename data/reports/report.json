@@ -3,7 +3,7 @@
     "kernel_release": "6.17.0-1022-azure",
     "arch": "x86_64",
     "distro": "Ubuntu 24.04.5 LTS",
-    "collected_at": "2026-09-28T09:28:17+00:00",
+    "collected_at": "2026-09-29T09:33:02+00:00",
     "trace_seconds": 5,
     "trace_backend": "none",
     "ran_as_root": false,
@@ -33,12 +33,12 @@
         "source": "process:10"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/103/exe'",
-        "source": "process:103"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1008/exe'",
+        "source": "process:1008"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1033/exe'",
-        "source": "process:1033"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1022/exe'",
+        "source": "process:1022"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/104/exe'",
@@ -53,112 +53,52 @@
         "source": "process:106"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1078/exe'",
-        "source": "process:1078"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/107/exe'",
+        "source": "process:107"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1087/exe'",
-        "source": "process:1087"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/108/exe'",
+        "source": "process:108"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1092/exe'",
         "source": "process:1092"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1093/exe'",
-        "source": "process:1093"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1094/exe'",
-        "source": "process:1094"
-      },
-      {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/11/exe'",
         "source": "process:11"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1102/exe'",
-        "source": "process:1102"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1128/exe'",
+        "source": "process:1128"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1103/exe'",
-        "source": "process:1103"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1129/exe'",
+        "source": "process:1129"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1104/exe'",
-        "source": "process:1104"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1148/exe'",
-        "source": "process:1148"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1199/exe'",
-        "source": "process:1199"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1164/exe'",
+        "source": "process:1164"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/12/exe'",
         "source": "process:12"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1206/exe'",
-        "source": "process:1206"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1216/exe'",
-        "source": "process:1216"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1218/exe'",
-        "source": "process:1218"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1233/exe'",
-        "source": "process:1233"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1235/exe'",
-        "source": "process:1235"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1259/exe'",
-        "source": "process:1259"
-      },
-      {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/13/exe'",
         "source": "process:13"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/131/exe'",
-        "source": "process:131"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1346/exe'",
-        "source": "process:1346"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1351/exe'",
-        "source": "process:1351"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1386/exe'",
-        "source": "process:1386"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/14/exe'",
         "source": "process:14"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1456/exe'",
-        "source": "process:1456"
-      },
-      {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/15/exe'",
         "source": "process:15"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/156/exe'",
-        "source": "process:156"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/157/exe'",
+        "source": "process:157"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/16/exe'",
@@ -169,12 +109,8 @@
         "source": "process:17"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/171/exe'",
-        "source": "process:171"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/178/exe'",
-        "source": "process:178"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/174/exe'",
+        "source": "process:174"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/179/exe'",
@@ -193,6 +129,18 @@
         "source": "process:181"
       },
       {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1817/exe'",
+        "source": "process:1817"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1832/exe'",
+        "source": "process:1832"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/1835/exe'",
+        "source": "process:1835"
+      },
+      {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/19/exe'",
         "source": "process:19"
       },
@@ -209,26 +157,6 @@
         "source": "process:20"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/200/exe'",
-        "source": "process:200"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/201/exe'",
-        "source": "process:201"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2014/exe'",
-        "source": "process:2014"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2031/exe'",
-        "source": "process:2031"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/2034/exe'",
-        "source": "process:2034"
-      },
-      {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/21/exe'",
         "source": "process:21"
       },
@@ -237,24 +165,24 @@
         "source": "process:22"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/222/exe'",
-        "source": "process:222"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/229/exe'",
-        "source": "process:229"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/224/exe'",
+        "source": "process:224"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/23/exe'",
         "source": "process:23"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/239/exe'",
-        "source": "process:239"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/230/exe'",
+        "source": "process:230"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/24/exe'",
         "source": "process:24"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/241/exe'",
+        "source": "process:241"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/25/exe'",
@@ -285,6 +213,14 @@
         "source": "process:30"
       },
       {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/306/exe'",
+        "source": "process:306"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/307/exe'",
+        "source": "process:307"
+      },
+      {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/31/exe'",
         "source": "process:31"
       },
@@ -295,6 +231,10 @@
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/33/exe'",
         "source": "process:33"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/330/exe'",
+        "source": "process:330"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/34/exe'",
@@ -309,20 +249,12 @@
         "source": "process:36"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/37/exe'",
-        "source": "process:37"
-      },
-      {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/38/exe'",
         "source": "process:38"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/39/exe'",
         "source": "process:39"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/392/exe'",
-        "source": "process:392"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/4/exe'",
@@ -333,20 +265,16 @@
         "source": "process:40"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/407/exe'",
-        "source": "process:407"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/408/exe'",
-        "source": "process:408"
-      },
-      {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/41/exe'",
         "source": "process:41"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/42/exe'",
         "source": "process:42"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/425/exe'",
+        "source": "process:425"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/43/exe'",
@@ -377,16 +305,16 @@
         "source": "process:49"
       },
       {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/493/exe'",
+        "source": "process:493"
+      },
+      {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/5/exe'",
         "source": "process:5"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/50/exe'",
         "source": "process:50"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/506/exe'",
-        "source": "process:506"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/51/exe'",
@@ -409,20 +337,32 @@
         "source": "process:55"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/56/exe'",
-        "source": "process:56"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/555/exe'",
+        "source": "process:555"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/560/exe'",
+        "source": "process:560"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/561/exe'",
+        "source": "process:561"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/562/exe'",
+        "source": "process:562"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/563/exe'",
+        "source": "process:563"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/564/exe'",
+        "source": "process:564"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/57/exe'",
         "source": "process:57"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/58/exe'",
-        "source": "process:58"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/580/exe'",
-        "source": "process:580"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/59/exe'",
@@ -451,6 +391,10 @@
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/64/exe'",
         "source": "process:64"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/644/exe'",
+        "source": "process:644"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/65/exe'",
@@ -485,10 +429,6 @@
         "source": "process:71"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/718/exe'",
-        "source": "process:718"
-      },
-      {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/72/exe'",
         "source": "process:72"
       },
@@ -509,8 +449,24 @@
         "source": "process:76"
       },
       {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/765/exe'",
+        "source": "process:765"
+      },
+      {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/77/exe'",
         "source": "process:77"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/770/exe'",
+        "source": "process:770"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/773/exe'",
+        "source": "process:773"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/777/exe'",
+        "source": "process:777"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/78/exe'",
@@ -529,12 +485,24 @@
         "source": "process:80"
       },
       {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/803/exe'",
+        "source": "process:803"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/805/exe'",
+        "source": "process:805"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/806/exe'",
+        "source": "process:806"
+      },
+      {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/81/exe'",
         "source": "process:81"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/82/exe'",
-        "source": "process:82"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/826/exe'",
+        "source": "process:826"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/83/exe'",
@@ -543,6 +511,10 @@
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/84/exe'",
         "source": "process:84"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/848/exe'",
+        "source": "process:848"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/85/exe'",
@@ -565,44 +537,44 @@
         "source": "process:89"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/9/exe'",
-        "source": "process:9"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/894/exe'",
+        "source": "process:894"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/896/exe'",
+        "source": "process:896"
+      },
+      {
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/898/exe'",
+        "source": "process:898"
       },
       {
         "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/90/exe'",
         "source": "process:90"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/92/exe'",
-        "source": "process:92"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/91/exe'",
+        "source": "process:91"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/954/exe'",
-        "source": "process:954"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/926/exe'",
+        "source": "process:926"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/959/exe'",
-        "source": "process:959"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/93/exe'",
+        "source": "process:93"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/961/exe'",
-        "source": "process:961"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/942/exe'",
+        "source": "process:942"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/966/exe'",
-        "source": "process:966"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/956/exe'",
+        "source": "process:956"
       },
       {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/995/exe'",
-        "source": "process:995"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/997/exe'",
-        "source": "process:997"
-      },
-      {
-        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/998/exe'",
-        "source": "process:998"
+        "reason": "exe unreadable: [Errno 13] Permission denied: '/proc/989/exe'",
+        "source": "process:989"
       },
       {
         "reason": "RuntimeError: perf exited 255",
@@ -1003,7 +975,7 @@
       "id": "w.Runner.Listener_home_runner_actions-runner_cached_2.337.0_bin_Runner.Listener",
       "comm": "Runner.Listener",
       "pids": [
-        2070
+        1918
       ],
       "uid": 1001,
       "caps_effective": [],
@@ -1014,7 +986,7 @@
       "id": "w.Runner.Worker_home_runner_actions-runner_cached_2.337.0_bin_Runner.Worker",
       "comm": "Runner.Worker",
       "pids": [
-        2090
+        1937
       ],
       "uid": 1001,
       "caps_effective": [],
@@ -1025,8 +997,8 @@
       "id": "w.bash_usr_bin_bash",
       "comm": "bash",
       "pids": [
-        2264,
-        2369
+        2110,
+        2213
       ],
       "uid": 1001,
       "caps_effective": [],
@@ -1037,7 +1009,7 @@
       "id": "w.hosted-compute-_opt_hca_hosted-compute-agent",
       "comm": "hosted-compute-",
       "pids": [
-        2017
+        1819
       ],
       "uid": 1001,
       "caps_effective": [],
@@ -1048,8 +1020,8 @@
       "id": "w.python_opt_hostedtoolcache_Python_3.11.16_x64_bin_python3.11",
       "comm": "python",
       "pids": [
-        2263,
-        2370
+        2109,
+        2215
       ],
       "uid": 1001,
       "caps_effective": [],
@@ -1060,7 +1032,7 @@
       "id": "w.sleep_usr_bin_sleep",
       "comm": "sleep",
       "pids": [
-        2373
+        2219
       ],
       "uid": 1001,
       "caps_effective": [],
